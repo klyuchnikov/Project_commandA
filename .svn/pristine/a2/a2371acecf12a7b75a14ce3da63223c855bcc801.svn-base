@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ReferenceGroup xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" ID="add8456e-01bc-4c85-8dc9-2dad4a8ea992" xmlns="urn:schemas-microsoft-com:xml-wcfservicemap">
+  <ClientOptions>
+    <GenerateAsynchronousMethods>false</GenerateAsynchronousMethods>
+    <EnableDataBinding>true</EnableDataBinding>
+    <ExcludedTypes />
+    <ImportXmlTypes>false</ImportXmlTypes>
+    <GenerateInternalTypes>false</GenerateInternalTypes>
+    <GenerateMessageContracts>false</GenerateMessageContracts>
+    <NamespaceMappings />
+    <CollectionMappings />
+    <GenerateSerializableTypes>true</GenerateSerializableTypes>
+    <Serializer>Auto</Serializer>
+    <UseSerializerForFaults>true</UseSerializerForFaults>
+    <ReferenceAllAssemblies>true</ReferenceAllAssemblies>
+    <ReferencedAssemblies />
+    <ReferencedDataContractTypes />
+    <ServiceContractMappings />
+  </ClientOptions>
+  <MetadataSources>
+    <MetadataSource Address="http://192.168.137.1:8000/ServiceSportsmens/ServiceData/" Protocol="http" SourceId="1" />
+  </MetadataSources>
+  <Metadata>
+    <MetadataFile FileName="item.xsd" MetadataType="Schema" ID="2b48a466-e3ad-49ce-9af6-62289a6839ac" SourceId="1" SourceUrl="http://192.168.137.1:8000/ServiceSportsmens/ServiceData/?xsd=xsd4" />
+    <MetadataFile FileName="item.disco" MetadataType="Disco" ID="b17a4dc7-668c-4c57-879e-01f3ffa7f987" SourceId="1" SourceUrl="http://192.168.137.1:8000/ServiceSportsmens/ServiceData/?disco" />
+    <MetadataFile FileName="ServiceData.wsdl" MetadataType="Wsdl" ID="e1505a6d-983c-4590-9cd3-611ba5052f0b" SourceId="1" SourceUrl="http://192.168.137.1:8000/ServiceSportsmens/ServiceData/?wsdl" />
+    <MetadataFile FileName="item1.xsd" MetadataType="Schema" ID="c6c719ea-fecd-4a8c-8050-e5279c128748" SourceId="1" SourceUrl="http://192.168.137.1:8000/ServiceSportsmens/ServiceData/?xsd=xsd2" />
+    <MetadataFile FileName="item2.xsd" MetadataType="Schema" ID="84f380ad-9fea-4f00-9510-94ae80676314" SourceId="1" SourceUrl="http://192.168.137.1:8000/ServiceSportsmens/ServiceData/?xsd=xsd3" />
+    <MetadataFile FileName="item3.xsd" MetadataType="Schema" ID="39471a6a-be91-424a-8e51-17846de0a932" SourceId="1" SourceUrl="http://192.168.137.1:8000/ServiceSportsmens/ServiceData/?xsd=xsd0" />
+    <MetadataFile FileName="item4.xsd" MetadataType="Schema" ID="828b471d-c152-4146-917c-2062e10a9e3e" SourceId="1" SourceUrl="http://192.168.137.1:8000/ServiceSportsmens/ServiceData/?xsd=xsd1" />
+  </Metadata>
+  <Extensions>
+    <ExtensionFile FileName="configuration91.svcinfo" Name="configuration91.svcinfo" />
+    <ExtensionFile FileName="configuration.svcinfo" Name="configuration.svcinfo" />
+  </Extensions>
+</ReferenceGroup>

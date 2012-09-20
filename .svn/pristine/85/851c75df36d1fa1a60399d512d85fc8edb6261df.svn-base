@@ -1,0 +1,64 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Windows.Forms;
+
+namespace Sportsmen_Monitoring
+{
+    public partial class Form_Input : Form
+    {
+        public Form_Input()
+        {
+            InitializeComponent();
+        }
+
+        // заполняем какими-то данными 
+        private void Form_Input_Load(object sender, EventArgs e)
+        {
+            Model.Instance.Sports.Add(new Sport{ Name = "Бег"});
+            Model.Instance.Sports.Add(new Sport { Name = "Плавание" });
+            sportsCB.Items.AddRange(Model.Instance.Sports.ToArray());
+
+            Model.Instance.Disciplines.Add(new Discipline { Name = "100 м", Sport = Model.Instance.Sports.Single(a => a.Name == "Бег") });
+            Model.Instance.Disciplines.Add(new Discipline { Name = "200 м", Sport = Model.Instance.Sports.Single(a => a.Name == "Бег") });
+            Model.Instance.Disciplines.Add(new Discipline { Name = "15 км", Sport = Model.Instance.Sports.Single(a => a.Name == "Бег") });
+
+            Model.Instance.Disciplines.Add(new Discipline { Name = "50 м", Sport = Model.Instance.Sports.Single(a => a.Name == "Плавание") });
+            Model.Instance.Disciplines.Add(new Discipline { Name = "100 м", Sport = Model.Instance.Sports.Single(a => a.Name == "Плавание") });
+            disciplinesCB.Items.Add(Model.Instance.Disciplines.ToArray());
+
+            Model.Instance.Goals.Add(new Goal { Discipline = Model.Instance.Disciplines.Single(a => a.Name == "100м"), Description = "пробежать за 10 секунд" });
+
+          //  Model.Instance.Users_Goals.Add(new User_Goal { Goal = Model.Instance.Goals.Single(a => a.Description == "пробежать за 10 секунд") });
+        }
+
+        // происходит при изменении в комбобоксе "Виды спорта"
+        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            groupBox_disciplines.Enabled = true;
+            disciplinesCB.SelectedText = "";
+            goalsCB.SelectedText = "";
+
+            var sport = (sportsCB.SelectedItem as Sport);
+            disciplinesCB.Items.Clear();
+            disciplinesCB.Items.AddRange(Model.Instance.Disciplines.Where(q => q.Sport.Name == sport.Name).ToArray());
+
+        }
+
+        private void disciplinesCB_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            groupBox_goals.Enabled = true;
+            button_newGoal.Enabled = true;
+            goalsCB.SelectedText = "";
+
+            var discipline = (disciplinesCB.SelectedItem as Discipline);
+            goalsCB.Items.Clear();
+            goalsCB.Items.AddRange(Model.Instance.Goals.Where(q => q.Description == discipline.Description).ToArray());
+
+        }
+    }
+}

@@ -1,0 +1,535 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Xml.Linq;
+using System.Runtime.Serialization;
+using System.Xml;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.IO;
+using System.Security.Cryptography;
+
+namespace Sportsmen_Monitoring
+{
+    /// <summary>
+    /// Модель данных
+    /// </summary>
+    [Serializable]
+    public class Model
+    {
+
+        public User CurrentUser { get; set; }
+        /// <summary>
+        /// Таблица Дисциплин
+        /// </summary>
+        public List<Discipline> Disciplines { get; set; }
+        /// <summary>
+        /// Таблица Цели
+        /// </summary>
+        public List<Goal> Goals { get; set; }
+        /// <summary>
+        /// Таблица Величин
+        /// </summary>
+        public List<Scale> Scales { get; set; }
+        /// <summary>
+        /// Таблица Виды спорта
+        /// </summary>
+        public List<Sport> Sports { get; set; }
+        /// <summary>
+        /// Таблица Эталонные данные
+        /// </summary>
+        public List<Standart_Data> Standarts_Datas { get; set; }
+
+        /// <summary>
+        /// Таблица Пользователей
+        /// </summary>
+        public List<User> Users { get; set; }
+
+        /// <summary>
+        /// Таблица Промежуточных данных пользователя
+        /// </summary>
+        public List<User_Data> Users_Datas { get; set; }
+
+        /// <summary>
+        /// Таблица Цели пользователя
+        /// </summary>
+        public List<User_Goal> Users_Goals { get; set; }
+
+        /// <summary>
+        /// Конструктор, инициализирует таблицы
+        /// </summary>
+        private Model()
+        {
+            Disciplines = new List<Discipline>();
+            Goals = new List<Goal>();
+            Scales = new List<Scale>();
+            Sports = new List<Sport>();
+            Standarts_Datas = new List<Standart_Data>();
+            Users = new List<User>();
+            Users_Datas = new List<User_Data>();
+            Users_Goals = new List<User_Goal>();
+            GenData();
+        }
+
+        private void GenData()
+        {
+            Scales.Add(new Scale { Name = "м." });
+            Scales.Add(new Scale { Name = "с." });
+            Scales.Add(new Scale { Name = "кг." });
+            Scales.Add(new Scale { Name = "шт." });
+
+            Sports.Add(new Sport { Name = "Бег" });
+            Sports.Add(new Sport { Name = "Плавание" });
+            Sports.Add(new Sport { Name = "Силовой спорт" });
+
+            Disciplines.Add(new Discipline { Name = "100м", Scales = Scales.Single(q => q.ID == 2), Sport = Sports.Single(q => q.ID == 1) });
+            Disciplines.Add(new Discipline { Name = "200м", Scales = Scales.Single(q => q.ID == 2), Sport = Sports.Single(q => q.ID == 1) });
+            Disciplines.Add(new Discipline { Name = "500м", Scales = Scales.Single(q => q.ID == 2), Sport = Sports.Single(q => q.ID == 1) });
+            Disciplines.Add(new Discipline { Name = "1000м", Scales = Scales.Single(q => q.ID == 2), Sport = Sports.Single(q => q.ID == 1) });
+
+            Disciplines.Add(new Discipline { Name = "10м", Scales = Scales.Single(q => q.ID == 2), Sport = Sports.Single(q => q.ID == 2) });
+            Disciplines.Add(new Discipline { Name = "20м", Scales = Scales.Single(q => q.ID == 2), Sport = Sports.Single(q => q.ID == 2) });
+            Disciplines.Add(new Discipline { Name = "50м", Scales = Scales.Single(q => q.ID == 2), Sport = Sports.Single(q => q.ID == 2) });
+
+            Disciplines.Add(new Discipline { Name = "Бицепс 10кг", Scales = Scales.Single(q => q.ID == 3), Sport = Sports.Single(q => q.ID == 3) });
+            Disciplines.Add(new Discipline { Name = "Трицепс 10кг", Scales = Scales.Single(q => q.ID == 3), Sport = Sports.Single(q => q.ID == 3) });
+            Disciplines.Add(new Discipline { Name = "Жим 70кг", Scales = Scales.Single(q => q.ID == 3), Sport = Sports.Single(q => q.ID == 3) });
+            Disciplines.Add(new Discipline { Name = "Жим 50кг", Scales = Scales.Single(q => q.ID == 3), Sport = Sports.Single(q => q.ID == 3) });
+
+            Users.Add(new User { AspnetUserLogin = "dmitry", FirstName = "D", Name = "M", Patronumic = "I", Password = Model.getMd5Hash("dmitry") });
+            Users.Add(new User { AspnetUserLogin = "denis", FirstName = "D", Name = "E", Patronumic = "N", Password = Model.getMd5Hash("denis") });
+            Users.Add(new User { AspnetUserLogin = "pavel", FirstName = "D", Name = "A", Patronumic = "V", Password = Model.getMd5Hash("pavel") });
+
+            Goals.Add(new Goal { Discipline = Disciplines.First(), PeriodDays = 7, Value = 20, Description = "100м за 20с" });
+ CurrentUser = Users.First();
+            Users_Goals.Add(new User_Goal { DateStart = DateTime.Now, Goal = Goals.First(), User = CurrentUser });
+           
+        }
+
+        /*
+         * 
+        public void LoadInFile()
+        {
+            Sports.Add(new Sport { Name = "qwe" });
+            DataContractSerializer dcs = new DataContractSerializer(typeof(Model));
+            StringBuilder sb = new StringBuilder();
+            XmlWriter writer = XmlWriter.Create(sb);
+            dcs.WriteObject(writer, this);
+            writer.Close();
+            string xml = sb.ToString();
+            XDocument.Parse(xml).Save("data.xml");
+
+            SaveBinaryFormat(this, "dd.xml");
+        }*/
+
+        /// <summary>
+        /// Сериализация данных в бинарных файл
+        /// </summary>
+        /// <param name="model">Модель данных</param>
+        /// <param name="fileName">Имя файла</param>
+        public void SaveBinaryFormat()
+        {
+            BinaryFormatter binFormat = new BinaryFormatter();
+            using (Stream fStream = new FileStream("data.dat", FileMode.Create, FileAccess.Write, FileShare.None))
+            {
+                binFormat.Serialize(fStream, this);
+            }
+        }
+
+        /// <summary>
+        /// Десериализация данных из файла
+        /// </summary>
+        /// <returns></returns>
+        public static void LoadFromBinaryFile()
+        {
+            BinaryFormatter binFormat = new BinaryFormatter();
+            using (Stream fStream = File.OpenRead("data.dat"))
+            {
+                instance = (Model)binFormat.Deserialize(fStream);
+            }
+        }
+
+        private static Model instance;
+        public static Model Instance
+        {
+            get
+            {
+                if (instance == null)
+                {
+                    instance = new Model();
+                }
+                return instance;
+            }
+        }
+
+        public static bool Authorization(string login, string pass)
+        {
+            var user = Model.Instance.Users.SingleOrDefault(a => a.AspnetUserLogin == login);
+            if (user == null)
+                return false;
+            if (user.Password != getMd5Hash(pass))
+                return false;
+            return true;
+
+        }
+
+        public static string getMd5Hash(string input)
+        {
+            // Create a new instance of the MD5CryptoServiceProvider object.
+            MD5 md5Hasher = MD5.Create();
+
+            // Convert the input string to a byte array and compute the hash.
+            byte[] data = md5Hasher.ComputeHash(Encoding.Default.GetBytes(input));
+
+            // Create a new Stringbuilder to collect the bytes
+            // and create a string.
+            StringBuilder sBuilder = new StringBuilder();
+
+            // Loop through each byte of the hashed data 
+            // and format each one as a hexadecimal string.
+            for (int i = 0; i < data.Length; i++)
+            {
+                sBuilder.Append(data[i].ToString("x2"));
+            }
+
+            // Return the hexadecimal string.
+            return sBuilder.ToString();
+        }
+
+
+    }
+
+    /// <summary>
+    /// Сущность Пользователь 
+    /// </summary>
+    [Serializable]
+    public class User
+    {
+        /// <summary>
+        /// Последний добавленный ID
+        /// </summary>
+        private static int lastID;
+
+        public User()
+        {
+            _id = ++lastID;
+        }
+        /// <summary>
+        /// Идентификатор
+        /// </summary>
+        public int ID { get { return _id; } }
+        private readonly int _id;
+        /// <summary>
+        /// Фамилия
+        /// </summary>
+        public string FirstName { get; set; }
+        /// <summary>
+        /// Имя
+        /// </summary>
+        public string Name { get; set; }
+        /// <summary>
+        /// Отчество
+        /// </summary>
+        public string Patronumic { get; set; }
+        /// <summary>
+        /// Дата рождения
+        /// </summary>
+        public DateTime DateBirth { get; set; }
+        /// <summary>
+        /// Логин в системе
+        /// </summary>
+        public string AspnetUserLogin { get; set; }
+        /// <summary>
+        /// Id в системе
+        /// </summary>
+        public int AspnetUserId { get; set; }
+
+        /// <summary>
+        /// Пароль, MD5
+        /// </summary>
+        public string Password { get; set; }
+
+        /// <summary>
+        /// Вывод ФИО 
+        /// </summary>
+        /// <returns>ФИО</returns>
+        public override string ToString()
+        {
+            return FirstName + " " + Name + " " + Patronumic;
+        }
+    }
+
+    /// <summary>
+    /// Сущность Вид спорта
+    /// </summary>
+    [Serializable]
+    public class Sport
+    {
+
+        /// <summary>
+        /// Последний добавленный ID
+        /// </summary>
+        private static int lastID;
+
+        public Sport()
+        {
+            _id = ++lastID;
+        }
+        /// <summary>
+        /// ID
+        /// </summary>
+        public int ID { get { return _id; } }
+        private readonly int _id;
+        /// <summary>
+        /// Имя
+        /// </summary>
+        public string Name { get; set; }
+
+        /// <summary>
+        /// Вывод вида спорта
+        /// </summary>
+        /// <returns>Название вида спорта</returns>
+        public override string ToString()
+        {
+            return Name;
+        }
+    }
+
+    /// <summary>
+    /// Сущность Величина
+    /// </summary>
+    [Serializable]
+    public class Scale
+    {
+        public Scale()
+        {
+            _id = ++lastID;
+        }
+
+        /// <summary>
+        /// Последний добавленный ID
+        /// </summary>
+        private static int lastID;
+        /// <summary>
+        /// ID
+        /// </summary>
+        public int ID { get { return _id; } }
+        private readonly int _id;
+        /// <summary>
+        /// Название
+        /// </summary>
+        public string Name { get; set; }
+
+        /// <summary>
+        /// Вывод величины
+        /// </summary>
+        /// <returns>Название величины</returns>
+        public override string ToString()
+        {
+            return Name;
+        }
+
+    }
+
+    /// <summary>
+    /// Дисциплина из вида спорта
+    /// </summary>
+    [Serializable]
+    public class Discipline
+    {
+
+        public Discipline()
+        {
+            _id = ++lastID;
+        }
+        /// <summary>
+        /// Последний добавленный ID
+        /// </summary>
+        private static int lastID;
+        /// <summary>
+        /// ID
+        /// </summary>
+        public int ID { get { return _id; } }
+        private readonly int _id;
+        /// <summary>
+        /// Название
+        /// </summary>
+        public string Name { get; set; }
+        /// <summary>
+        /// Вид спорта, к которому относится дисциплина
+        /// </summary>
+        public Sport Sport { get; set; }
+        /// <summary>
+        /// Величина
+        /// </summary>
+        public Scale Scales { get; set; }
+        /// <summary>
+        /// Опивание
+        /// </summary>
+        public string Description { get; set; }
+
+        /// <summary>
+        /// Вывод названия дисциплины
+        /// </summary>
+        /// <returns>Название дисциплины</returns>
+        public override string ToString()
+        {
+            return Name;
+        }
+    }
+
+    /// <summary>
+    /// Сущность Цель
+    /// </summary>
+    [Serializable]
+    public class Goal
+    {
+
+        public Goal()
+        {
+            _id = ++lastID;
+        }
+
+        /// <summary>
+        /// Последний добавленный ID
+        /// </summary>
+        private static int lastID;
+        /// <summary>
+        /// ID
+        /// </summary>
+        public int ID { get { return _id; } }
+        private readonly int _id;
+        /// <summary>
+        /// Значение
+        /// </summary>
+        public float Value { get; set; }
+        /// <summary>
+        /// Дисциплина, по которой цель
+        /// </summary>
+        public Discipline Discipline { get; set; }
+        /// <summary>
+        /// Период достижения цели в днях
+        /// </summary>
+        public int PeriodDays { get; set; }
+        /// <summary>
+        /// Описание
+        /// </summary>
+        public string Description { get; set; }
+
+        /// <summary>
+        /// Вывод описания
+        /// </summary>
+        /// <returns>Описание</returns>
+        public override string ToString()
+        {
+            return Description;
+        }
+    }
+
+    /// <summary>
+    /// Сущность Эталонные данные
+    /// </summary>
+    [Serializable]
+    public class Standart_Data
+    {
+        public Standart_Data()
+        {
+            _id = ++lastID;
+        }
+
+        /// <summary>
+        /// Последний добавленный ID
+        /// </summary>
+        private static int lastID;
+        /// <summary>
+        /// ID
+        /// </summary>
+        public int ID { get { return _id; } }
+        private readonly int _id;
+        /// <summary>
+        /// Значение
+        /// </summary>
+        public float Value { get; set; }
+        /// <summary>
+        /// Цель
+        /// </summary>
+        public Goal Goal { get; set; }
+        /// <summary>
+        /// День от начала срока выполнения цели
+        /// </summary>
+        public int Day { get; set; }
+    }
+
+    /// <summary>
+    /// Сущность Цели пользователя
+    /// </summary>
+    [Serializable]
+    public class User_Goal
+    {
+
+        public User_Goal()
+        {
+            _id = ++lastID;
+        }
+        /// <summary>
+        /// Последний добавленный ID
+        /// </summary>
+        private static int lastID;
+        /// <summary>
+        /// ID
+        /// </summary>
+        public int ID { get { return _id; } }
+        private readonly int _id;
+        /// <summary>
+        /// Пользователь
+        /// </summary>
+        public User User { get; set; }
+        /// <summary>
+        /// Цель
+        /// </summary>
+        public Goal Goal { get; set; }
+        /// <summary>
+        /// Дата постановки цели
+        /// </summary>
+        public DateTime DateStart { get; set; }
+    }
+
+    /// <summary>
+    /// Сущность Промежуточные данные пользователя
+    /// </summary>
+    [Serializable]
+    public class User_Data
+    {
+        public User_Data()
+        {
+            _id = ++lastID;
+        }
+
+        /// <summary>
+        /// Последний добавленный ID
+        /// </summary>
+        private static int lastID;
+        /// <summary>
+        /// ID
+        /// </summary>
+        public int ID { get { return _id; } }
+        private readonly int _id;
+        /// <summary>
+        /// Цель пользователя
+        /// </summary>
+        public User_Goal User_Goal { get; set; }
+        /// <summary>
+        /// Значение
+        /// </summary>
+        public float value { get; set; }
+        /// <summary>
+        /// Дата заполнения
+        /// </summary>
+        public DateTime Date { get; set; }
+    }
+
+
+
+
+
+}

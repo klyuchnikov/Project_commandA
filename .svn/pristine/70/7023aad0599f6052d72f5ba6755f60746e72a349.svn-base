@@ -1,0 +1,279 @@
+﻿namespace Sportsmen_Monitoring
+{
+    partial class Form_Input_Admin
+    {
+        /// <summary>
+        /// Required designer variable.
+        /// </summary>
+        private System.ComponentModel.IContainer components = null;
+
+        /// <summary>
+        /// Clean up any resources being used.
+        /// </summary>
+        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing && (components != null))
+            {
+                components.Dispose();
+            }
+            base.Dispose(disposing);
+        }
+
+        #region Windows Form Designer generated code
+
+        /// <summary>
+        /// Required method for Designer support - do not modify
+        /// the contents of this method with the code editor.
+        /// </summary>
+        private void InitializeComponent()
+        {
+            this.ViewGrafics = new System.Windows.Forms.Button();
+            this.DataPostedLabel = new System.Windows.Forms.Label();
+            this.PostedDataButton = new System.Windows.Forms.Button();
+            this.groupBox_goals = new System.Windows.Forms.GroupBox();
+            this.goalsCB = new System.Windows.Forms.ComboBox();
+            this.groupBox_disciplines = new System.Windows.Forms.GroupBox();
+            this.disciplinesCB = new System.Windows.Forms.ComboBox();
+            this.groupBox_sports = new System.Windows.Forms.GroupBox();
+            this.sportsCB = new System.Windows.Forms.ComboBox();
+            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.sportsmens = new System.Windows.Forms.ListBox();
+            this.datetimeEnd = new System.Windows.Forms.DateTimePicker();
+            this.datetimeStart = new System.Windows.Forms.DateTimePicker();
+            this.dataGridView1 = new System.Windows.Forms.DataGridView();
+            this.groupBox_Start = new System.Windows.Forms.GroupBox();
+            this.groupBox_end = new System.Windows.Forms.GroupBox();
+            this.groupBox4 = new System.Windows.Forms.GroupBox();
+            this.groupBox_goals.SuspendLayout();
+            this.groupBox_disciplines.SuspendLayout();
+            this.groupBox_sports.SuspendLayout();
+            this.groupBox1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
+            this.groupBox_Start.SuspendLayout();
+            this.groupBox_end.SuspendLayout();
+            this.groupBox4.SuspendLayout();
+            this.SuspendLayout();
+            // 
+            // ViewGrafics
+            // 
+            this.ViewGrafics.Location = new System.Drawing.Point(843, 328);
+            this.ViewGrafics.Name = "ViewGrafics";
+            this.ViewGrafics.Size = new System.Drawing.Size(154, 26);
+            this.ViewGrafics.TabIndex = 21;
+            this.ViewGrafics.Text = "Посмотреть графики";
+            this.ViewGrafics.UseVisualStyleBackColor = true;
+            this.ViewGrafics.Visible = false;
+            // 
+            // DataPostedLabel
+            // 
+            this.DataPostedLabel.AutoSize = true;
+            this.DataPostedLabel.Font = new System.Drawing.Font("Verdana", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.DataPostedLabel.ForeColor = System.Drawing.Color.SeaGreen;
+            this.DataPostedLabel.Location = new System.Drawing.Point(820, 312);
+            this.DataPostedLabel.Name = "DataPostedLabel";
+            this.DataPostedLabel.Size = new System.Drawing.Size(180, 13);
+            this.DataPostedLabel.TabIndex = 20;
+            this.DataPostedLabel.Text = "Данные успешно отправлены";
+            this.DataPostedLabel.Visible = false;
+            // 
+            // PostedDataButton
+            // 
+            this.PostedDataButton.Location = new System.Drawing.Point(862, 312);
+            this.PostedDataButton.Name = "PostedDataButton";
+            this.PostedDataButton.Size = new System.Drawing.Size(135, 40);
+            this.PostedDataButton.TabIndex = 8;
+            this.PostedDataButton.Text = "Отправка данных";
+            this.PostedDataButton.UseVisualStyleBackColor = true;
+            this.PostedDataButton.Click += new System.EventHandler(this.PostedDataButton_Click);
+            // 
+            // groupBox_goals
+            // 
+            this.groupBox_goals.Controls.Add(this.goalsCB);
+            this.groupBox_goals.Enabled = false;
+            this.groupBox_goals.Location = new System.Drawing.Point(12, 134);
+            this.groupBox_goals.Name = "groupBox_goals";
+            this.groupBox_goals.Size = new System.Drawing.Size(138, 55);
+            this.groupBox_goals.TabIndex = 25;
+            this.groupBox_goals.TabStop = false;
+            this.groupBox_goals.Text = "Цель";
+            // 
+            // goalsCB
+            // 
+            this.goalsCB.FormattingEnabled = true;
+            this.goalsCB.Location = new System.Drawing.Point(6, 19);
+            this.goalsCB.Name = "goalsCB";
+            this.goalsCB.Size = new System.Drawing.Size(125, 21);
+            this.goalsCB.TabIndex = 18;
+            this.goalsCB.SelectedIndexChanged += new System.EventHandler(this.goalsCB_SelectedIndexChanged);
+            // 
+            // groupBox_disciplines
+            // 
+            this.groupBox_disciplines.Controls.Add(this.disciplinesCB);
+            this.groupBox_disciplines.Enabled = false;
+            this.groupBox_disciplines.Location = new System.Drawing.Point(12, 73);
+            this.groupBox_disciplines.Name = "groupBox_disciplines";
+            this.groupBox_disciplines.Size = new System.Drawing.Size(138, 55);
+            this.groupBox_disciplines.TabIndex = 24;
+            this.groupBox_disciplines.TabStop = false;
+            this.groupBox_disciplines.Text = "Дисциплина";
+            // 
+            // disciplinesCB
+            // 
+            this.disciplinesCB.FormattingEnabled = true;
+            this.disciplinesCB.Location = new System.Drawing.Point(6, 19);
+            this.disciplinesCB.Name = "disciplinesCB";
+            this.disciplinesCB.Size = new System.Drawing.Size(126, 21);
+            this.disciplinesCB.TabIndex = 15;
+            this.disciplinesCB.SelectedIndexChanged += new System.EventHandler(this.disciplinesCB_SelectedIndexChanged);
+            // 
+            // groupBox_sports
+            // 
+            this.groupBox_sports.Controls.Add(this.sportsCB);
+            this.groupBox_sports.Location = new System.Drawing.Point(12, 12);
+            this.groupBox_sports.Name = "groupBox_sports";
+            this.groupBox_sports.Size = new System.Drawing.Size(138, 55);
+            this.groupBox_sports.TabIndex = 23;
+            this.groupBox_sports.TabStop = false;
+            this.groupBox_sports.Text = "Виды спорта";
+            // 
+            // sportsCB
+            // 
+            this.sportsCB.FormattingEnabled = true;
+            this.sportsCB.Location = new System.Drawing.Point(6, 19);
+            this.sportsCB.Name = "sportsCB";
+            this.sportsCB.Size = new System.Drawing.Size(125, 21);
+            this.sportsCB.TabIndex = 3;
+            this.sportsCB.SelectedIndexChanged += new System.EventHandler(this.sportsCB_SelectedIndexChanged);
+            // 
+            // groupBox1
+            // 
+            this.groupBox1.Controls.Add(this.sportsmens);
+            this.groupBox1.Location = new System.Drawing.Point(156, 14);
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.Size = new System.Drawing.Size(138, 295);
+            this.groupBox1.TabIndex = 4;
+            this.groupBox1.TabStop = false;
+            this.groupBox1.Text = "Выберите спорсменов";
+            // 
+            // sportsmens
+            // 
+            this.sportsmens.FormattingEnabled = true;
+            this.sportsmens.Location = new System.Drawing.Point(6, 19);
+            this.sportsmens.Name = "sportsmens";
+            this.sportsmens.Size = new System.Drawing.Size(126, 264);
+            this.sportsmens.TabIndex = 0;
+            // 
+            // datetimeEnd
+            // 
+            this.datetimeEnd.Location = new System.Drawing.Point(6, 19);
+            this.datetimeEnd.Name = "datetimeEnd";
+            this.datetimeEnd.Size = new System.Drawing.Size(125, 20);
+            this.datetimeEnd.TabIndex = 27;
+            this.datetimeEnd.ValueChanged += new System.EventHandler(this.datetimeEnd_ValueChanged);
+            // 
+            // datetimeStart
+            // 
+            this.datetimeStart.Location = new System.Drawing.Point(6, 19);
+            this.datetimeStart.Name = "datetimeStart";
+            this.datetimeStart.Size = new System.Drawing.Size(125, 20);
+            this.datetimeStart.TabIndex = 27;
+            this.datetimeStart.ValueChanged += new System.EventHandler(this.datetimeStart_ValueChanged);
+            // 
+            // dataGridView1
+            // 
+            this.dataGridView1.AllowUserToAddRows = false;
+            this.dataGridView1.AllowUserToDeleteRows = false;
+            this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dataGridView1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.dataGridView1.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
+            this.dataGridView1.Location = new System.Drawing.Point(3, 16);
+            this.dataGridView1.Name = "dataGridView1";
+            this.dataGridView1.Size = new System.Drawing.Size(697, 276);
+            this.dataGridView1.TabIndex = 28;
+            // 
+            // groupBox_Start
+            // 
+            this.groupBox_Start.Controls.Add(this.datetimeStart);
+            this.groupBox_Start.Enabled = false;
+            this.groupBox_Start.Location = new System.Drawing.Point(12, 195);
+            this.groupBox_Start.Name = "groupBox_Start";
+            this.groupBox_Start.Size = new System.Drawing.Size(138, 54);
+            this.groupBox_Start.TabIndex = 30;
+            this.groupBox_Start.TabStop = false;
+            this.groupBox_Start.Text = "Начало периода";
+            // 
+            // groupBox_end
+            // 
+            this.groupBox_end.Controls.Add(this.datetimeEnd);
+            this.groupBox_end.Enabled = false;
+            this.groupBox_end.Location = new System.Drawing.Point(12, 255);
+            this.groupBox_end.Name = "groupBox_end";
+            this.groupBox_end.Size = new System.Drawing.Size(138, 54);
+            this.groupBox_end.TabIndex = 30;
+            this.groupBox_end.TabStop = false;
+            this.groupBox_end.Text = "Конец периода";
+            // 
+            // groupBox4
+            // 
+            this.groupBox4.Controls.Add(this.dataGridView1);
+            this.groupBox4.Location = new System.Drawing.Point(300, 14);
+            this.groupBox4.Name = "groupBox4";
+            this.groupBox4.Size = new System.Drawing.Size(703, 295);
+            this.groupBox4.TabIndex = 31;
+            this.groupBox4.TabStop = false;
+            this.groupBox4.Text = "Заполнение результатов";
+            // 
+            // Form_Input_Admin
+            // 
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.BackColor = System.Drawing.SystemColors.Control;
+            this.ClientSize = new System.Drawing.Size(1015, 401);
+            this.Controls.Add(this.groupBox4);
+            this.Controls.Add(this.groupBox_end);
+            this.Controls.Add(this.groupBox_Start);
+            this.Controls.Add(this.PostedDataButton);
+            this.Controls.Add(this.groupBox1);
+            this.Controls.Add(this.groupBox_goals);
+            this.Controls.Add(this.groupBox_disciplines);
+            this.Controls.Add(this.groupBox_sports);
+            this.Controls.Add(this.DataPostedLabel);
+            this.Controls.Add(this.ViewGrafics);
+            this.Name = "Form_Input_Admin";
+            this.Text = "Форма ввода результатов";
+            this.Load += new System.EventHandler(this.Form_Input_Load);
+            this.groupBox_goals.ResumeLayout(false);
+            this.groupBox_disciplines.ResumeLayout(false);
+            this.groupBox_sports.ResumeLayout(false);
+            this.groupBox1.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
+            this.groupBox_Start.ResumeLayout(false);
+            this.groupBox_end.ResumeLayout(false);
+            this.groupBox4.ResumeLayout(false);
+            this.ResumeLayout(false);
+            this.PerformLayout();
+
+        }
+
+        #endregion
+
+        private System.Windows.Forms.Button PostedDataButton;
+        private System.Windows.Forms.Label DataPostedLabel;
+        private System.Windows.Forms.Button ViewGrafics;
+        private System.Windows.Forms.GroupBox groupBox_goals;
+        private System.Windows.Forms.ComboBox goalsCB;
+        private System.Windows.Forms.GroupBox groupBox_disciplines;
+        private System.Windows.Forms.ComboBox disciplinesCB;
+        private System.Windows.Forms.GroupBox groupBox_sports;
+        private System.Windows.Forms.ComboBox sportsCB;
+        private System.Windows.Forms.GroupBox groupBox1;
+        private System.Windows.Forms.ListBox sportsmens;
+        private System.Windows.Forms.DateTimePicker datetimeEnd;
+        private System.Windows.Forms.DateTimePicker datetimeStart;
+        private System.Windows.Forms.DataGridView dataGridView1;
+        private System.Windows.Forms.GroupBox groupBox_Start;
+        private System.Windows.Forms.GroupBox groupBox_end;
+        private System.Windows.Forms.GroupBox groupBox4;
+    }
+}

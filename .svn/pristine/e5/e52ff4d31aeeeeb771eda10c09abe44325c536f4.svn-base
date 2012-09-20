@@ -1,0 +1,772 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Xml.Linq;
+using System.Runtime.Serialization;
+using System.Xml;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.IO;
+using System.Security.Cryptography;
+
+namespace Sportsmen_Monitoring
+{
+    /// <summary>
+    /// Модель данных
+    /// </summary>
+    [Serializable]
+    public class Model
+    {
+        public ServiceConnectServer.ServiceDataClient client { get; set; }
+
+        public User CurrentUser { get; set; }
+        /// <summary>
+        /// Таблица Дисциплин
+        /// </summary>
+        public List<Discipline> Disciplines { get; set; }
+        /// <summary>
+        /// Таблица Цели
+        /// </summary>
+        public List<Goal> Goals { get; set; }
+        /// <summary>
+        /// Таблица Величин
+        /// </summary>
+        public List<Scale> Scales { get; set; }
+        /// <summary>
+        /// Таблица Виды спорта
+        /// </summary>
+        public List<Sport> Sports { get; set; }
+        /// <summary>
+        /// Таблица Эталонные данные
+        /// </summary>
+        public List<Standart_Data> Standarts_Datas { get; set; }
+
+        /// <summary>
+        /// Таблица Пользователей
+        /// </summary>
+        public List<User> Users { get; set; }
+
+        /// <summary>
+        /// Таблица Промежуточных данных пользователя
+        /// </summary>
+        public List<User_Data> Users_Datas { get; set; }
+
+        /// <summary>
+        /// Таблица Цели пользователя
+        /// </summary>
+        public List<User_Goal> Users_Goals { get; set; }
+
+        /// <summary>
+        /// Конструктор, инициализирует таблицы
+        /// </summary>
+        private Model()
+        {
+            Disciplines = new List<Discipline>();
+            Goals = new List<Goal>();
+            Scales = new List<Scale>();
+            Sports = new List<Sport>();
+            Standarts_Datas = new List<Standart_Data>();
+            Users = new List<User>();
+            Users_Datas = new List<User_Data>();
+            Users_Goals = new List<User_Goal>();
+            //GenData();
+        }
+
+        static Model()
+        {
+            LoadFromBinaryFile();
+        }
+
+        /// <summary>
+        /// Сериализация данных в бинарных файл
+        /// </summary>
+        /// <param name="model">Модель данных</param>
+        /// <param name="fileName">Имя файла</param>
+        public void SaveBinaryFormat()
+        {
+            BinaryFormatter binFormat = new BinaryFormatter();
+            using (Stream fStream = new FileStream("data.dat", FileMode.Create, FileAccess.Write, FileShare.None))
+            {
+                binFormat.Serialize(fStream, this);
+            }
+        }
+
+        public void Synchronization()
+        {
+            SynchEntities();
+            SynchData();
+        }
+
+        public void SynchEntities()
+        {
+            var scales = client.GetAllScales();
+            foreach (var a in scales)
+            {
+                var scale = Scales.SingleOrDefault(q => q.ID == a.Id);
+                if (scale == null)
+                    Scales.Add(new Scale(a.Id, a.Name));
+                else
+                    scale.Update(a.Name);
+            }
+            var sports = client.GetAllSports();
+            foreach (var a in sports)
+            {
+                var sport = Sports.SingleOrDefault(q => q.ID == a.Id);
+                if (sport == null)
+                {
+                    sport = new Sport(a.Id, a.Name);
+                    Sports.Add(sport);
+                }
+                else
+                    sport.Update(a.Name);
+                var disciplines = client.GetDiscipliniesFromSport(a.Id);
+                foreach (var disc in disciplines)
+                {
+                    var discipline = Disciplines.SingleOrDefault(q => q.ID == disc.Id);
+                    if (discipline == null)
+                    {
+                        discipline = new Discipline(disc.Id, disc.Name, sport, Scales.Single(q => q.ID == disc.ScaleId), disc.Description);
+                        Disciplines.Add(discipline);
+                    }
+                    else
+                        discipline.Update(disc.Name, sport, Scales.Single(q => q.ID == disc.ScaleId), disc.Description);
+                    var goals = client.GetGoalsFromDiscipline(disc.Id);
+                    foreach (var g in goals)
+                    {
+                        var goal = Goals.SingleOrDefault(q => q.ID == g.Id);
+                        if (goal == null)
+                        {
+                            goal = new Goal(g.Id, g.Value, discipline, g.PeriodDays, g.Description);
+                            Goals.Add(goal);
+                        }
+                        else
+                            goal.Update(g.Value, discipline, g.PeriodDays, g.Description);
+
+                        var users_goals = client.GetUsers_GoalsFromUser(CurrentUser.ID);
+                        foreach (var userg in users_goals)
+                        {
+                            var user_goal = Users_Goals.SingleOrDefault(q => q.ID == userg.Id);
+                            if (user_goal == null)
+                            {
+                                user_goal = new User_Goal(userg.Id, CurrentUser, goal, userg.DateStart);
+                                Users_Goals.Add(user_goal);
+                            }
+                            else
+                                user_goal.Update(CurrentUser, goal, userg.DateStart);
+                            var stand_datas = client.GetStandart_DataFromGoal(user_goal.Goal.ID);
+                            foreach (var s in stand_datas)
+                            {
+                                var stand = Standarts_Datas.SingleOrDefault(q => q.ID == s.Id);
+                                if (stand == null)
+                                {
+                                    stand = new Standart_Data(s.Id, s.Value, user_goal.Goal, s.Day);
+                                    Standarts_Datas.Add(stand);
+                                }
+                                else
+                                    stand.Update(s.Value, user_goal.Goal, s.Day);
+                            }
+                            var users_data = client.GetUsers_DataFromGoal(userg.GoalId);
+                            foreach (var us in users_data)
+                            {
+                                var user_data = Users_Datas.SingleOrDefault(q => q.ID == us.Id);
+                                if (user_data == null)
+                                {
+                                    user_data = new User_Data(us.Id, user_goal, /*us.Value*/ 5, us.Date);
+                                    Users_Datas.Add(user_data);
+                                }
+                                else
+                                    user_data.Update(user_goal, us.Value, us.Date);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        public void SynchData()
+        {
+            var arr = Standarts_Datas.Where(a => a.ID == 0).ToArray();
+            foreach (var a in arr)
+            {
+                try
+                {
+                    var res = client.AddStandart_Data(a.Value, a.Goal.ID, a.Day);
+                    a.UpdateId(res.Id);
+                }catch(Exception e){}
+            }
+            var ar = Users_Goals.Where(a => a.ID == 0).ToArray();
+            foreach (var a in ar)
+            {
+                try
+                {
+                    var res = client.AddUsers_Goals(a.User.ID, a.Goal.ID, a.DateStart);
+                    a.UpdateId(res.Id);
+                    var usr_datas = Users_Datas.Where(q => q.User_Goal.ID == a.ID & q.ID == 0).ToArray();
+                    foreach (var q in usr_datas)
+                    {
+                        var ress = client.AddUsers_Data(a.ID, q.Date, (float)q.Value);
+                        q.UpdateId(ress.Id);
+                    }
+                }
+                catch (Exception e) { }
+            }
+        }
+        /// <summary>
+        /// Десериализация данных из файла
+        /// </summary>
+        /// <returns></returns>
+        public static void LoadFromBinaryFile()
+        {
+            if (!File.Exists("data.dat"))
+            {
+                instance = new Model();
+                return;
+            }
+            BinaryFormatter binFormat = new BinaryFormatter();
+            using (Stream fStream = File.OpenRead("data.dat"))
+            {
+                instance = (Model)binFormat.Deserialize(fStream);
+            }
+        }
+
+        private static Model instance;
+        public static Model Instance
+        {
+            get
+            {
+                if (instance == null)
+                {
+                    instance = new Model();
+                }
+                return instance;
+            }
+        }
+
+        public static bool Authorization(string login, string pass)
+        {
+            var user = Model.Instance.Users.SingleOrDefault(a => a.AspnetUserLogin == login);
+            if (user == null)
+                return false;
+            if (user.Password != getMd5Hash(pass))
+                return false;
+            return true;
+
+        }
+        /// <summary>
+        /// Возвражает шифрованную строку
+        /// </summary>
+        /// <param name="input">Входная строка</param>
+        /// <returns></returns>
+        public static string getMd5Hash(string input)
+        {
+            // Create a new instance of the MD5CryptoServiceProvider object.
+            MD5 md5Hasher = MD5.Create();
+
+            // Convert the input string to a byte array and compute the hash.
+            byte[] data = md5Hasher.ComputeHash(Encoding.Default.GetBytes(input));
+
+            // Create a new Stringbuilder to collect the bytes
+            // and create a string.
+            StringBuilder sBuilder = new StringBuilder();
+
+            // Loop through each byte of the hashed data 
+            // and format each one as a hexadecimal string.
+            for (int i = 0; i < data.Length; i++)
+            {
+                sBuilder.Append(data[i].ToString("x2"));
+            }
+
+            // Return the hexadecimal string.
+            return sBuilder.ToString();
+        }
+    }
+
+    /// <summary>
+    /// Сущность Пользователь 
+    /// </summary>
+    [Serializable]
+    public class User
+    {
+        /// <summary>
+        /// Последний добавленный ID
+        /// </summary>
+        private static int lastID;
+
+        public User(int id, string firstName, string name, string patronymic, DateTime dateBirth, string userLogin, int userId, bool isadmin, byte right, User coach)
+        {
+            _id = id;
+            _firstName = firstName;
+            _name = name;
+            _patronumic = patronymic;
+            _dateBirth = dateBirth;
+            _aspnetUserLogin = userLogin;
+            _aspnetUserId = userId;
+            _isAdmin = isadmin;
+            _right = right;
+            _userCoach = coach;
+        }
+
+
+        public void Update(string firstName, string name, string patronymic, DateTime dateBirth, string userLogin, int userId, bool isadmin, byte right, User coach)
+        {
+            _firstName = firstName;
+            _name = name;
+            _patronumic = patronymic;
+            _dateBirth = dateBirth;
+            _aspnetUserLogin = userLogin;
+            _aspnetUserId = userId;
+            _isAdmin = isadmin;
+            _right = right;
+            _userCoach = coach;
+        }
+
+        /// <summary>
+        /// Идентификатор
+        /// </summary>
+        public int ID { get { return _id; } }
+        private readonly int _id;
+        /// <summary>
+        /// Фамилия
+        /// </summary>
+        public string FirstName { get { return _firstName; } }
+        private string _firstName;
+        /// <summary>
+        /// Имя
+        /// </summary>
+        public string Name { get { return _name; } }
+        private string _name;
+        /// <summary>
+        /// Отчество
+        /// </summary>
+        public string Patronumic { get { return _patronumic; } }
+        private string _patronumic;
+        /// <summary>
+        /// Дата рождения
+        /// </summary>
+        public DateTime DateBirth { get { return _dateBirth; } }
+        private DateTime _dateBirth;
+        /// <summary>
+        /// Логин в системе
+        /// </summary>
+        public string AspnetUserLogin { get { return _aspnetUserLogin; } }
+        private string _aspnetUserLogin;
+        /// <summary>
+        /// Id в системе
+        /// </summary>
+        public int AspnetUserId { get { return _aspnetUserId; } }
+        private int _aspnetUserId;
+
+        /// <summary>
+        /// Пароль, MD5
+        /// </summary>
+        public string Password { get; set; }
+
+        /// <summary>
+        /// Вывод ФИО 
+        /// </summary>
+        /// <returns>ФИО</returns>
+        public override string ToString()
+        {
+            return FirstName + " " + Name + " " + Patronumic;
+        }
+
+        public bool IsAdmin { get { return _isAdmin; } }
+        private bool _isAdmin;
+
+        public byte Right { get { return _right; } }
+        private byte _right;
+         
+        public User UserCoach { get { return _userCoach; } }
+        private User _userCoach;
+    }
+
+    /// <summary>
+    /// Сущность Вид спорта
+    /// </summary>
+    [Serializable]
+    public class Sport
+    {
+        /// <summary>
+        /// Последний добавленный ID
+        /// </summary>
+        private static int lastID;
+
+        public Sport(int id, string name)
+        {
+            this._id = id;
+            _name = name;
+        }
+
+        public void Update(string name)
+        {
+            _name = name;
+        }
+
+        /// <summary>
+        /// ID
+        /// </summary>
+        public int ID { get { return _id; } }
+        private readonly int _id;
+        /// <summary>
+        /// Имя
+        /// </summary>
+        public string Name { get { return _name; } }
+        private string _name;
+        /// <summary>
+        /// Вывод вида спорта
+        /// </summary>
+        /// <returns>Название вида спорта</returns>
+        public override string ToString()
+        {
+            return Name;
+        }
+    }
+
+    /// <summary>
+    /// Сущность Величина
+    /// </summary>
+    [Serializable]
+    public class Scale
+    {
+        public Scale(int id, string name)
+        {
+            _id = id;
+            _name = name;
+        }
+
+        public void Update(string name)
+        {
+            _name = name;
+        }
+        /// <summary>
+        /// Последний добавленный ID
+        /// </summary>
+        private static int lastID;
+        /// <summary>
+        /// ID
+        /// </summary>
+        public int ID { get { return _id; } }
+        private readonly int _id;
+        /// <summary>
+        /// Название
+        /// </summary>
+        public string Name { get { return _name; } }
+        private string _name;
+        /// <summary>
+        /// Вывод величины
+        /// </summary>
+        /// <returns>Название величины</returns>
+        public override string ToString()
+        {
+            return Name;
+        }
+
+    }
+
+    /// <summary>
+    /// Дисциплина из вида спорта
+    /// </summary>
+    [Serializable]
+    public class Discipline
+    {
+
+        public Discipline(int id, string name, Sport sport, Scale scale, string description)
+        {
+            _id = id;
+            _name = name;
+            _sport = sport;
+            _scale = scale;
+            _description = description;
+        }
+
+        public void Update(string name, Sport sport, Scale scale, string description)
+        {
+            _name = name;
+            _sport = sport;
+            _scale = scale;
+            _description = description;
+        }
+        /// <summary>
+        /// Последний добавленный ID
+        /// </summary>
+        private static int lastID;
+        /// <summary>
+        /// ID
+        /// </summary>
+        public int ID { get { return _id; } }
+        private readonly int _id;
+        /// <summary>
+        /// Название
+        /// </summary>
+        public string Name { get { return _name; } }
+        private string _name;
+        /// <summary>
+        /// Вид спорта, к которому относится дисциплина
+        /// </summary>
+        public Sport Sport { get { return _sport; } }
+        private Sport _sport;
+        /// <summary>
+        /// Величина
+        /// </summary>
+        public Scale Scale { get { return _scale; } }
+        private Scale _scale;
+        /// <summary>
+        /// Опивание
+        /// </summary>
+        public string Description { get { return _description; } }
+        private string _description;
+        /// <summary>
+        /// Вывод названия дисциплины
+        /// </summary>
+        /// <returns>Название дисциплины</returns>
+        public override string ToString()
+        {
+            return Name;
+        }
+    }
+
+    /// <summary>
+    /// Сущность Цель
+    /// </summary>
+    [Serializable]
+    public class Goal
+    {
+        public Goal(int id, double value, Discipline discipline, int periodDays, string description)
+        {
+            _id = id;
+            _value = value;
+            _discipline = discipline;
+            _periodDays = periodDays;
+            _description = description;
+        }
+
+
+        public void Update(double value, Discipline discipline, int periodDays, string description)
+        {
+            _value = value;
+            _discipline = discipline;
+            _periodDays = periodDays;
+            _description = description;
+        }
+
+        /// <summary>
+        /// Последний добавленный ID
+        /// </summary>
+        private static int lastID;
+        /// <summary>
+        /// ID
+        /// </summary>
+        public int ID { get { return _id; } }
+        private readonly int _id;
+        /// <summary>
+        /// Значение
+        /// </summary>
+        public double Value { get { return _value; } }
+        private double _value;
+        /// <summary>
+        /// Дисциплина, по которой цель
+        /// </summary>
+        public Discipline Discipline { get { return _discipline; } }
+        private Discipline _discipline;
+        /// <summary>
+        /// Период достижения цели в днях
+        /// </summary>
+        public int PeriodDays { get { return _periodDays; } }
+        private int _periodDays;
+        /// <summary>
+        /// Описание
+        /// </summary>
+        public string Description { get { return _description; } }
+        private string _description;
+
+        public User Owner { get { return _owner; } }
+        private User _owner;
+
+
+
+        /// <summary>
+        /// Вывод описания
+        /// </summary>
+        /// <returns>Описание</returns>
+        public override string ToString()
+        {
+            return Description;
+        }
+    }
+
+    /// <summary>
+    /// Сущность Эталонные данные
+    /// </summary>
+    [Serializable]
+    public class Standart_Data
+    {
+        public Standart_Data(int id, double value, Goal goal, short day)
+        {
+            _id = id;
+            _value = value;
+            _goal = goal;
+            _day = day;
+        }
+
+        public void Update(double value, Goal goal, short day)
+        {
+            _value = value;
+            _goal = goal;
+            _day = day;
+        }
+        public void UpdateId(int id)
+        {
+            _id = id;
+        }
+
+        /// <summary>
+        /// Последний добавленный ID
+        /// </summary>
+        private static int lastID;
+        /// <summary>
+        /// ID
+        /// </summary>
+        public int ID { get { return _id; } }
+        private int _id;
+        /// <summary>
+        /// Значение
+        /// </summary>
+        public double Value { get { return _value; } }
+        private double _value;
+        /// <summary>
+        /// Цель
+        /// </summary>
+        public Goal Goal { get { return _goal; } }
+        private Goal _goal;
+        /// <summary>
+        /// День от начала срока выполнения цели
+        /// </summary>
+        public short Day { get { return _day; } }
+        private short _day;
+    }
+
+    /// <summary>
+    /// Сущность Цели пользователя
+    /// </summary>
+    [Serializable]
+    public class User_Goal
+    {
+
+        public User_Goal(int id, User user, Goal goal, DateTime dateStart)
+        {
+            if (id == 0)
+            {
+                var res = Model.Instance.client.AddUsers_Goals(user.ID, goal.ID, dateStart);
+                _id = res.Id;
+            }
+            else
+                _id = id;
+            _user = user;
+            _goal = goal;
+            _dateStart = dateStart;
+        }
+
+
+        public void Update(User user, Goal goal, DateTime dateStart)
+        {
+            _user = user;
+            _goal = goal;
+            _dateStart = dateStart;
+        }
+
+        public void UpdateId(int id)
+        {
+            _id = id;
+        }
+        /// <summary>
+        /// Последний добавленный ID
+        /// </summary>
+        private static int lastID;
+        /// <summary>
+        /// ID
+        /// </summary>
+        public int ID { get { return _id; } }
+        private int _id;
+        /// <summary>
+        /// Пользователь
+        /// </summary>
+        public User User { get { return _user; } }
+        private User _user;
+        /// <summary>
+        /// Цель
+        /// </summary>
+        public Goal Goal { get { return _goal; } }
+        private Goal _goal;
+        /// <summary>
+        /// Дата постановки цели
+        /// </summary>
+        public DateTime DateStart { get { return _dateStart; } }
+        private DateTime _dateStart;
+
+        public override string ToString()
+        {
+            return Goal.Description;
+        }
+    }
+
+    /// <summary>
+    /// Сущность Промежуточные данные пользователя
+    /// </summary>
+    [Serializable]
+    public class User_Data
+    {
+        public User_Data(int id, User_Goal user_Goal, double value, DateTime date)
+        {
+            if (id == 0)
+            {
+                if (user_Goal.ID != 0)
+                {
+                    var res = Model.Instance.client.AddUsers_Data(user_Goal.ID, date, (float)value);
+                    _id = res.Id;
+                }
+            }
+            else
+                _id = id;
+            _user_Goal = user_Goal;
+            _value = value;
+            _date = date;
+        }
+
+        public void Update(User_Goal user_Goal, double value, DateTime date)
+        {
+            _user_Goal = user_Goal;
+            _value = value;
+            _date = date;
+        }
+
+        public void UpdateId(int id)
+        {
+            _id = id;
+        }
+
+        /// <summary>
+        /// Последний добавленный ID
+        /// </summary>
+        private static int lastID;
+        /// <summary>
+        /// ID
+        /// </summary>
+        public int ID { get { return _id; } }
+        private int _id;
+        /// <summary>
+        /// Цель пользователя
+        /// </summary>
+        public User_Goal User_Goal { get { return _user_Goal; } }
+        private User_Goal _user_Goal;
+        /// <summary>
+        /// Значение
+        /// </summary>
+        public double Value { get { return _value; } }
+        private double _value;
+        /// <summary>
+        /// Дата заполнения
+        /// </summary>
+        public DateTime Date { get { return _date; } }
+        private DateTime _date;
+    }
+}

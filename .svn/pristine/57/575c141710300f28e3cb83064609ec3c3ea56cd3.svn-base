@@ -1,0 +1,89 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Windows.Forms;
+
+namespace Sportsmen_Monitoring
+{
+    public partial class MainMenu : Form
+    {
+        
+        int tickCount = 0;
+        public MainMenu()
+        {
+            InitializeComponent();
+        }
+
+        private void label2_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void MainMenu_Load(object sender, EventArgs e)
+        {
+            timerMain.Start();
+        }
+
+        private void timerMain_Tick(object sender, EventArgs e)
+        {
+            tickCount++;
+            
+            if (tickCount == 1)
+                labelLatter1.Visible = true;
+            if (tickCount == 2)
+                labelLatter2.Visible = true;
+            if (tickCount == 3)
+                labelLatter3.Visible = true;
+            if (tickCount == 4)
+                labelLatter4.Visible = true;
+            if (tickCount == 5)
+                labelLatter5.Visible = true;
+            if (tickCount == 6)
+                labelLatter6.Visible = true;
+            if (tickCount == 7)
+                labelLatter7.Visible = true;
+            if (tickCount == 8)
+                labelLatter8.Visible = true;
+            if (tickCount == 9)
+                labelLatter9.Visible = true;
+            if (tickCount == 10)
+                labelLatter10.Visible = true;
+            if (tickCount == 11)
+                labelLatter11.Visible = true;
+            if (tickCount == 12)
+                labelLatter12.Visible = true;
+            if (tickCount == 13)
+                labelLatter13.Visible = true;
+            if (tickCount == 14)
+                labelLatter14.Visible = true;
+            if (tickCount == 15)
+                labelLatter15.Visible = true;
+            if (tickCount == 16)
+                labelLatter16.Visible = true;
+            if (tickCount == 17)
+                labelLatter17.Visible = true;
+            if (tickCount == 18)
+                labelLatter18.Visible = true;
+            if (tickCount == 19)
+                labelLatter19.Visible = true;
+            if (tickCount == 20)
+                labelLatter20.Visible = true;
+            if (tickCount == 21)
+                labelLatter21.Visible = true;
+            if (tickCount == 30)
+                buttonStart.Visible = true;
+        }
+
+        private void buttonStart_Click(object sender, EventArgs e)
+        {
+            var form = new FormAuth();
+            Hide();
+            form.ShowDialog();
+        }
+    }
+}
+ 

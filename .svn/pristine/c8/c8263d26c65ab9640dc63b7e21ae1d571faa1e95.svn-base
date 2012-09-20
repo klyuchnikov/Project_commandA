@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:ser="http://schemas.microsoft.com/2003/10/Serialization/" xmlns:tns="http://schemas.datacontract.org/2004/07/ServiceSportsmens" elementFormDefault="qualified" targetNamespace="http://schemas.datacontract.org/2004/07/ServiceSportsmens" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:import schemaLocation="http://localhost:8000/ServiceSportsmens/ServiceData/?xsd=xsd1" namespace="http://schemas.microsoft.com/2003/10/Serialization/" />
+  <xs:complexType name="ArrayOfUsers_Goals">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="Users_Goals" nillable="true" type="tns:Users_Goals" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfUsers_Goals" nillable="true" type="tns:ArrayOfUsers_Goals" />
+  <xs:complexType name="Users_Goals">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="Id" type="xs:int" />
+      <xs:element minOccurs="0" name="UserId" type="xs:int" />
+      <xs:element minOccurs="0" name="GoalId" type="xs:int" />
+      <xs:element minOccurs="0" name="DateStart" type="xs:dateTime" />
+      <xs:element minOccurs="0" name="Users_Data" nillable="true" type="tns:ArrayOfUsers_Data">
+        <xs:annotation>
+          <xs:appinfo>
+            <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/" />
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="Users_Goals" nillable="true" type="tns:Users_Goals" />
+  <xs:complexType name="ArrayOfUsers_Data">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="Users_Data" nillable="true" type="tns:Users_Data" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfUsers_Data" nillable="true" type="tns:ArrayOfUsers_Data" />
+  <xs:complexType name="Users_Data">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="Id" type="xs:int" />
+      <xs:element minOccurs="0" name="Value" type="xs:double" />
+      <xs:element minOccurs="0" name="Date" type="xs:dateTime" />
+      <xs:element minOccurs="0" name="User_GoalId" type="xs:int" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="Users_Data" nillable="true" type="tns:Users_Data" />
+  <xs:complexType name="ArrayOfUsers">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="Users" nillable="true" type="tns:Users" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfUsers" nillable="true" type="tns:ArrayOfUsers" />
+  <xs:complexType name="Users">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="Id" type="xs:int" />
+      <xs:element minOccurs="0" name="FirstName" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Name" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Patronumic" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="AspnetUserId" type="ser:guid" />
+      <xs:element minOccurs="0" name="DateBirth" type="xs:dateTime" />
+      <xs:element minOccurs="0" name="CoachId" type="xs:int" />
+      <xs:element minOccurs="0" name="Users_Goals" nillable="true" type="tns:ArrayOfUsers_Goals">
+        <xs:annotation>
+          <xs:appinfo>
+            <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/" />
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="Users" nillable="true" type="tns:Users" />
+  <xs:complexType name="ArrayOfStandart_Data">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="Standart_Data" nillable="true" type="tns:Standart_Data" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfStandart_Data" nillable="true" type="tns:ArrayOfStandart_Data" />
+  <xs:complexType name="Standart_Data">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="Id" type="xs:int" />
+      <xs:element minOccurs="0" name="Value" type="xs:double" />
+      <xs:element minOccurs="0" name="GoalId" type="xs:int" />
+      <xs:element minOccurs="0" name="Day" type="xs:short" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="Standart_Data" nillable="true" type="tns:Standart_Data" />
+  <xs:complexType name="Sports">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="Id" type="xs:int" />
+      <xs:element minOccurs="0" name="Name" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Discipline" nillable="true" type="tns:ArrayOfDiscipline">
+        <xs:annotation>
+          <xs:appinfo>
+            <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/" />
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="Sports" nillable="true" type="tns:Sports" />
+  <xs:complexType name="ArrayOfDiscipline">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="Discipline" nillable="true" type="tns:Discipline" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfDiscipline" nillable="true" type="tns:ArrayOfDiscipline" />
+  <xs:complexType name="Discipline">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="Id" type="xs:int" />
+      <xs:element minOccurs="0" name="Name" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="SportId" type="xs:int" />
+      <xs:element minOccurs="0" name="ScaleId" type="xs:int" />
+      <xs:element minOccurs="0" name="Description" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Goals" nillable="true" type="tns:ArrayOfGoals">
+        <xs:annotation>
+          <xs:appinfo>
+            <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/" />
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="Discipline" nillable="true" type="tns:Discipline" />
+  <xs:complexType name="ArrayOfGoals">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="Goals" nillable="true" type="tns:Goals" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfGoals" nillable="true" type="tns:ArrayOfGoals" />
+  <xs:complexType name="Goals">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="Id" type="xs:int" />
+      <xs:element minOccurs="0" name="DisciplineId" type="xs:int" />
+      <xs:element minOccurs="0" name="Value" type="xs:double" />
+      <xs:element minOccurs="0" name="PeriodDays" type="xs:short" />
+      <xs:element minOccurs="0" name="Description" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Standart_Data" nillable="true" type="tns:ArrayOfStandart_Data">
+        <xs:annotation>
+          <xs:appinfo>
+            <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/" />
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="Users_Goals" nillable="true" type="tns:ArrayOfUsers_Goals">
+        <xs:annotation>
+          <xs:appinfo>
+            <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/" />
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="Goals" nillable="true" type="tns:Goals" />
+  <xs:complexType name="ArrayOfScales">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="Scales" nillable="true" type="tns:Scales" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfScales" nillable="true" type="tns:ArrayOfScales" />
+  <xs:complexType name="Scales">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="Id" type="xs:int" />
+      <xs:element minOccurs="0" name="Name" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Discipline" nillable="true" type="tns:ArrayOfDiscipline">
+        <xs:annotation>
+          <xs:appinfo>
+            <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/" />
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="Scales" nillable="true" type="tns:Scales" />
+  <xs:complexType name="ArrayOfSports">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="Sports" nillable="true" type="tns:Sports" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfSports" nillable="true" type="tns:ArrayOfSports" />
+</xs:schema>

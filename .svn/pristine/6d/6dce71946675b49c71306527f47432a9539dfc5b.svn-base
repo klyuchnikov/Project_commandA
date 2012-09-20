@@ -1,0 +1,30 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Windows.Forms;
+
+namespace Sportsmen_Monitoring
+{
+    public partial class FormRegistration : Form
+    {
+        public FormRegistration()
+        {
+            InitializeComponent();
+        }
+
+        private void SecondNameTB_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void RegB_Click(object sender, EventArgs e)
+        {
+           // var pict = new PictureBox
+        } 
+
+    }
+}

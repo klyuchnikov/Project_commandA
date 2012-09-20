@@ -1,0 +1,101 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Windows.Forms;
+
+namespace Sportsmen_Monitoring
+{
+    public partial class Form_Input : Form
+    {
+        public Form_Input()
+        {
+            InitializeComponent();
+        }
+
+        int resultat = 0;
+        // заполняем какими-то данными 
+        private void Form_Input_Load(object sender, EventArgs e)
+        {
+            Model.Instance.Users.Add(new User { FirstName = "Иванов", Name = "Илья", Patronumic = "Васильевич" });
+           
+            Model.Instance.Sports.Add(new Sport{ Name = "Бег"});
+            Model.Instance.Sports.Add(new Sport { Name = "Плавание" });
+            sportsCB.Items.AddRange(Model.Instance.Sports.ToArray());
+
+            Model.Instance.Scales.Add( new Scale{ Name = "сек"});
+            Model.Instance.Scales.Add( new Scale{ Name = "м"});
+
+            Model.Instance.Disciplines.Add(new Discipline { Name = "100 м", Sport = Model.Instance.Sports.Single(a => a.Name == "Бег") });
+            Model.Instance.Disciplines.Add(new Discipline { Name = "200 м", Sport = Model.Instance.Sports.Single(a => a.Name == "Бег") });
+            Model.Instance.Disciplines.Add(new Discipline { Name = "15 км", Sport = Model.Instance.Sports.Single(a => a.Name == "Бег") });
+
+            Model.Instance.Disciplines.Add(new Discipline { Name = "50 м", Sport = Model.Instance.Sports.Single(a => a.Name == "Плавание"), Scales = Model.Instance.Scales.Single(a => a.Name == "сек") });
+            Model.Instance.Disciplines.Add(new Discipline { Name = "300 м", Sport = Model.Instance.Sports.Single(a => a.Name == "Плавание"), Scales = Model.Instance.Scales.Single(a => a.Name == "м") });
+            disciplinesCB.Items.Add(Model.Instance.Disciplines.ToArray());
+
+
+            Model.Instance.Goals.Add(new Goal { Discipline = Model.Instance.Disciplines.Single(a => a.Name == "50 м"), Description = "проплыть за 10 секунд" });
+            Model.Instance.Goals.Add(new Goal { Discipline = Model.Instance.Disciplines.Single(a => a.Name == "100 м"), Description = "пробежать за 30 секунд" });
+          //  Model.Instance.Users_Goals.Add(new User_Goal { Goal = Model.Instance.Goals.Single(a => a.Description == "пробежать за 10 секунд") });
+
+            Model.Instance.SaveBinaryFormat(); 
+          //  Model.LoadFromBinaryFile();
+        }
+
+        // происходит при изменении в комбобоксе "Виды спорта"
+        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            groupBox_disciplines.Enabled = true;
+            groupBox_Send.Enabled = false;
+            disciplinesCB.Text = "";
+            goalsCB.Text = "";
+
+            var sport = (sportsCB.SelectedItem as Sport);
+            disciplinesCB.Items.Clear();
+            disciplinesCB.Items.AddRange(Model.Instance.Disciplines.Where(q => q.Sport.Name == sport.Name).ToArray());
+
+        }
+
+        private void disciplinesCB_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            goalsCB.Text = "";
+            groupBox_Send.Enabled = false;
+            groupBox_goals.Enabled = true;
+            button_newGoal.Enabled = true;
+            goalsCB.SelectedText = "";
+
+            var discipline = (disciplinesCB.SelectedItem as Discipline);
+            goalsCB.Items.Clear();
+            goalsCB.Items.AddRange(Model.Instance.Goals.Where(q => q.Discipline.Name == discipline.Name).ToArray());
+
+        }
+
+        private void goalsCB_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            groupBox_Send.Enabled = true;
+
+            Discipline discipline = (disciplinesCB.SelectedItem as Discipline);
+            label_metric.Text = discipline.Scales.Name.ToString();
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            if (Int32.TryParse(textBox_result.Text, out resultat))
+            {
+
+                Model.Instance.Users_Datas.Add(new User_Data { Date = dateTimePickerGoal.Value, value = resultat });
+                label_send.Text = "Данные успешо отправлены!";
+                label_send.Visible = true;
+            }
+            else
+            {
+                label_send.Text = "Проверьте правильность введённых данных";
+                label_send.Visible = true;
+            }
+        }
+    }
+}

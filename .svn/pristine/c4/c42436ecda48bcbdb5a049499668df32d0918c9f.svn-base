@@ -1,0 +1,188 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text.RegularExpressions;
+using System.Windows.Forms;
+using Sportsmen_Monitoring.ServiceConnectServer;
+
+namespace Sportsmen_Monitoring
+{
+    public partial class FormRegistration : Form
+    {
+        private List<Control> listErrorsControls = new List<Control>();
+        public FormRegistration()
+        {
+            InitializeComponent();
+        }
+
+        /// <summary>
+        /// Вывод изображения
+        /// </summary>
+        /// <param name="isError"></param>
+        /// <returns></returns>
+        private PictureBox GetNewPicture(bool isError)
+        {
+            var pict = new PictureBox();
+            pict.Size = new Size(16, 16);
+            pict.SizeMode = PictureBoxSizeMode.Zoom;
+            if (isError)
+                pict.Image = Properties.Resources.krest_mini;
+            else
+                pict.Image = Properties.Resources.gal_mini;
+            return pict;
+        }
+
+        /// <summary>
+        /// Проверка на правельность
+        /// </summary>
+        /// <returns>правельность заполнения полей</returns>
+        private bool Validation()
+        {
+            if (listErrorsControls.Count > 0)
+            {
+                foreach (var a in listErrorsControls)
+                {
+                    Controls.Remove(a);
+                }
+                listErrorsControls.Clear();
+            }
+
+            if (Regex.Match(SecondNameTB.Text, "[^a-zA-Z0-9а-яА-ЯёЁ ]").Length > 0 || SecondNameTB.Text.Length == 0)
+            {
+                var pict = GetNewPicture(true);
+                pict.Location = new Point(SecondNameTB.Location.X + SecondNameTB.Width + 10, SecondNameTB.Location.Y);
+                Controls.Add(pict);
+                listErrorsControls.Add(pict);
+            }
+            else
+            {
+                var pict = GetNewPicture(false);
+                pict.Location = new Point(SecondNameTB.Location.X + SecondNameTB.Width + 10, SecondNameTB.Location.Y);
+                Controls.Add(pict);
+                listErrorsControls.Add(pict);
+            }
+
+            if (Regex.Match(NameTB.Text, "[^a-zA-Z0-9а-яА-ЯёЁ ]").Length > 0 || NameTB.Text.Length == 0)
+            {
+                var pict = GetNewPicture(true);
+                pict.Location = new Point(NameTB.Location.X + NameTB.Width + 10, NameTB.Location.Y);
+                Controls.Add(pict);
+                listErrorsControls.Add(pict);
+            }
+            else
+            {
+                var pict = GetNewPicture(false);
+                pict.Location = new Point(NameTB.Location.X + NameTB.Width + 10, NameTB.Location.Y);
+                Controls.Add(pict);
+                listErrorsControls.Add(pict);
+            }
+
+            if (Regex.Match(LastNameTB.Text, "[^a-zA-Z0-9а-яА-ЯёЁ ]").Length > 0 || LastNameTB.Text.Length == 0)
+            {
+                var pict = GetNewPicture(true);
+                pict.Location = new Point(LastNameTB.Location.X + LastNameTB.Width + 10, LastNameTB.Location.Y);
+                Controls.Add(pict);
+                listErrorsControls.Add(pict);
+            }
+            else
+            {
+                var pict = GetNewPicture(false);
+                pict.Location = new Point(LastNameTB.Location.X + LastNameTB.Width + 10, LastNameTB.Location.Y);
+                Controls.Add(pict);
+                listErrorsControls.Add(pict);
+            }
+
+            if (Regex.Match(LoginTB.Text, "[^a-zA-Z0-9]{6,}").Length > 0 || LoginTB.Text.Length == 0)
+            {
+                var pict = GetNewPicture(true);
+                pict.Location = new Point(LoginTB.Location.X + LoginTB.Width + 10, LoginTB.Location.Y);
+                Controls.Add(pict);
+                listErrorsControls.Add(pict);
+            }
+            else
+            {
+                var pict = GetNewPicture(false);
+                pict.Location = new Point(LoginTB.Location.X + LoginTB.Width + 10, LoginTB.Location.Y);
+                Controls.Add(pict);
+                listErrorsControls.Add(pict);
+            }
+
+            if (Regex.Match(PassTB.Text, "[^a-zA-Z0-9]").Length > 0 || PassTB.Text.Length < 6)
+            {
+                var pict = GetNewPicture(true);
+                pict.Location = new Point(PassTB.Location.X + PassTB.Width + 10, PassTB.Location.Y);
+                Controls.Add(pict);
+                listErrorsControls.Add(pict);
+            }
+            else
+            {
+                var pict = GetNewPicture(false);
+                pict.Location = new Point(PassTB.Location.X + PassTB.Width + 10, PassTB.Location.Y);
+                Controls.Add(pict);
+                listErrorsControls.Add(pict);
+            }
+
+            if (Regex.Match(SecondPassTB.Text, "[^a-zA-Z0-9]").Length > 0 || SecondPassTB.Text.Length < 6)
+            {
+                var pict = GetNewPicture(true);
+                pict.Location = new Point(SecondPassTB.Location.X + SecondPassTB.Width + 10, SecondPassTB.Location.Y);
+                Controls.Add(pict);
+                listErrorsControls.Add(pict);
+            }
+            else
+            {
+                var pict = GetNewPicture(false);
+                pict.Location = new Point(SecondPassTB.Location.X + SecondPassTB.Width + 10, SecondPassTB.Location.Y);
+                Controls.Add(pict);
+                listErrorsControls.Add(pict);
+            }
+
+            if (PassTB.Text != SecondPassTB.Text)
+                ErrorL.Visible = true;
+            else
+                ErrorL.Visible = false;
+
+            if (listErrorsControls.Count == 0)
+                return true;
+            else
+                return false;
+        }
+
+
+        private void RegB_Click(object sender, EventArgs e)
+        {
+            if (Validation())
+            {
+                MembershipCreateStatus status;
+                var res = Model.Instance.client.AddUser(out status, SecondNameTB.Text, NameTB.Text, LastNameTB.Text, DataBirthDTP.Value, LoginTB.Text, PassTB.Text);
+                if (status == MembershipCreateStatus.Success)
+                {
+                    var coach = Model.Instance.Users.SingleOrDefault(a => a.ID == res.CoachId);
+                    if (coach == null)
+                    {
+                        var u = Model.Instance.client.GetUserFromId(res.CoachId);
+                        coach = new User(res.Id, res.FirstName, res.Name, res.Patronumic, res.DateBirth, null, res.AspnetUserId, res.Right, null);
+                        Model.Instance.Users.Add(coach);
+                    }
+                    Model.Instance.Users.Add(new User(res.Id, res.FirstName, res.Name, res.Patronumic, res.DateBirth, LoginTB.Text, res.AspnetUserId, res.Right, coach));
+                }
+                Model.Instance.SaveBinaryFormat();
+                MessageBox.Show("Вы успешно зарегистрировались!");
+                Close();
+            }
+
+        }
+
+
+
+        private void FormRegistration_Load(object sender, EventArgs e)
+        {
+
+        }
+
+
+    }
+}

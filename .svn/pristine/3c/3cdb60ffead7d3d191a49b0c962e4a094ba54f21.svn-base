@@ -1,0 +1,375 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Windows.Forms;
+
+namespace Sportsmen_Monitoring
+{
+    public partial class Graphic : Form
+    {
+        int x_1 = 0;
+        int y_1 = 0;
+        int x_2 = 0;
+        int y_2 = 0;
+        int count = 0;
+        Graphics graph;
+        Image buffer;
+        Graphics bufgraph;
+        bool point = true;
+        public Panel panel1;
+        private Label label1;
+        private GroupBox groupBox_sports;
+        private ComboBox sportsCB;
+        private GroupBox groupBox_disciplines;
+        private ComboBox disciplinesCB;
+        private GroupBox groupBox_goals;
+        private ComboBox goalsCB;
+        private GroupBox groupBox_Start;
+        private DateTimePicker datetimeStart;
+        private GroupBox groupBox_end;
+        private DateTimePicker datetimeEnd;
+        List<Point> points = new List<Point>();
+        public Graphic()
+        {
+            InitializeComponent();
+            buffer = new Bitmap(panel1.Width, panel1.Height);
+            bufgraph = Graphics.FromImage(buffer);
+            //bufgraph.FillEllipse(Brushes.White, 0, 0, panel1.Width, panel1.Height);
+            //bufgraph.FillRectangle(Brushes.White, 0, 0, paintPanel.Width, paintPanel.Height);
+            graph = panel1.CreateGraphics();
+        }
+
+        public void drawGrid() 
+        {
+            Brush br = new SolidBrush(Color.LightGray);
+            Pen pen = new Pen(br);
+            for (int i = 0; i < panel1.Width; i += 10)
+            {
+                bufgraph.DrawLine(pen, i, 0, i, panel1.Height);
+            }
+            for (int i = 0; i < panel1.Height; i += 10)
+            {
+                bufgraph.DrawLine(pen, 0, i, panel1.Width, i);
+            }
+            
+        }
+
+        public void getData()
+        {
+        }
+
+        public void drawOsi()
+        {
+            Brush br = new SolidBrush(Color.Black);
+            Pen pen = new Pen(br);
+            bufgraph.DrawLine(pen, 20, panel1.Height - 20, 20, 20);
+            bufgraph.DrawLine(pen, 20, panel1.Height - 20, panel1.Width - 20, panel1.Height - 20);
+
+            bufgraph.DrawLine(pen, 20, 20, 15, 30);
+            bufgraph.DrawLine(pen, 20, 20, 25, 30);
+
+            bufgraph.DrawLine(pen, panel1.Width - 20, panel1.Height - 20, panel1.Width - 30, panel1.Height - 25);
+            bufgraph.DrawLine(pen, panel1.Width - 20, panel1.Height - 20, panel1.Width - 30, panel1.Height - 15);
+            
+        }
+
+        public void drawPoints()
+        {
+            Brush br = new SolidBrush(Color.Black);
+            Pen pen = new Pen(br);
+            bufgraph.DrawEllipse(pen, 25, 25, 10, 10);
+            bufgraph.DrawEllipse(pen, 125, 125, 10, 10);
+            bufgraph.DrawEllipse(pen, 175, 175, 10, 10);
+            bufgraph.DrawEllipse(pen, 225, 225, 10, 10);
+            bufgraph.DrawEllipse(pen, 335, 335, 10, 10);
+
+            bufgraph.DrawEllipse(pen, 25, 45, 10, 10);
+            bufgraph.DrawEllipse(pen, 55, 175, 10, 10);
+            bufgraph.DrawEllipse(pen, 85, 265, 10, 10);
+            bufgraph.DrawEllipse(pen, 175, 295, 10, 10);
+            bufgraph.DrawEllipse(pen, 315, 335, 10, 10);
+
+            bufgraph.DrawEllipse(pen, 45, 25, 10, 10);
+            bufgraph.DrawEllipse(pen, 175, 55, 10, 10);
+            bufgraph.DrawEllipse(pen, 265, 85, 10, 10);
+            bufgraph.DrawEllipse(pen, 295, 175, 10, 10);
+            bufgraph.DrawEllipse(pen, 335, 315, 10, 10);
+
+        }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+           
+        }
+
+        public void draw_line ()
+        {
+            Pen blackPen = new Pen(Color.Black, 2);
+            bufgraph.DrawLine(blackPen, x_1, y_1, x_2, y_2);
+        }
+
+
+        private void panel1_Paint(object sender, PaintEventArgs e)
+        {
+            drawGrid();
+            drawOsi();
+            drawPoints();
+            bufgraph.DrawLine(new Pen(Color.Black, 2), x_1, y_1, x_2, y_2);
+            graph.DrawImage(buffer, 0, 0, panel1.Width, panel1.Height);
+            
+        }
+
+        private void panel1_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (point)
+            {
+                x_1 = e.X;
+                y_1 = e.Y;
+                point = false;
+            }
+            
+
+        }
+
+        private void panel1_MouseUp(object sender, MouseEventArgs e)
+        {
+            points.Add(new Point(x_1,y_1));
+            if ((x_1 >= 25) && (x_1 <= 35) || (x_1 >= 55) && (x_1 <= 65) || (x_1 >= 85) && (x_1 <= 95) || (x_1 >= 175) && (x_1 <= 185) || (x_1 >= 315) && (x_1 <= 325))
+            {
+                int temp = 1;
+                count++;
+                if (count > 4)
+                {
+                    label1.Text = "График построен правильно";
+                }
+            }
+            else
+            {
+                label1.Text = "График построен неправильно";
+            }
+            x_2 = e.X;
+            y_2 = e.Y;
+            panel1.Refresh();
+            
+            x_1 = x_2;
+            y_1 = y_2;
+            
+        }
+
+        private void Graphic_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            Application.Exit();
+        }
+
+        private void InitializeComponent()
+        {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Graphic));
+            this.panel1 = new System.Windows.Forms.Panel();
+            this.label1 = new System.Windows.Forms.Label();
+            this.groupBox_sports = new System.Windows.Forms.GroupBox();
+            this.sportsCB = new System.Windows.Forms.ComboBox();
+            this.groupBox_disciplines = new System.Windows.Forms.GroupBox();
+            this.disciplinesCB = new System.Windows.Forms.ComboBox();
+            this.groupBox_goals = new System.Windows.Forms.GroupBox();
+            this.goalsCB = new System.Windows.Forms.ComboBox();
+            this.groupBox_Start = new System.Windows.Forms.GroupBox();
+            this.datetimeStart = new System.Windows.Forms.DateTimePicker();
+            this.groupBox_end = new System.Windows.Forms.GroupBox();
+            this.datetimeEnd = new System.Windows.Forms.DateTimePicker();
+            this.panel1.SuspendLayout();
+            this.groupBox_sports.SuspendLayout();
+            this.groupBox_disciplines.SuspendLayout();
+            this.groupBox_goals.SuspendLayout();
+            this.groupBox_Start.SuspendLayout();
+            this.groupBox_end.SuspendLayout();
+            this.SuspendLayout();
+            // 
+            // panel1
+            // 
+            this.panel1.BackColor = System.Drawing.Color.White;
+            this.panel1.Controls.Add(this.label1);
+            this.panel1.Location = new System.Drawing.Point(170, -3);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(756, 424);
+            this.panel1.TabIndex = 0;
+            this.panel1.Paint += new System.Windows.Forms.PaintEventHandler(this.panel1_Paint);
+            this.panel1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.panel1_MouseDown);
+            this.panel1.MouseUp += new System.Windows.Forms.MouseEventHandler(this.panel1_MouseUp);
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(779, 148);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(51, 13);
+            this.label1.TabIndex = 0;
+            this.label1.Text = "Графики";
+            // 
+            // groupBox_sports
+            // 
+            this.groupBox_sports.BackColor = System.Drawing.Color.Transparent;
+            this.groupBox_sports.Controls.Add(this.sportsCB);
+            this.groupBox_sports.Location = new System.Drawing.Point(12, 12);
+            this.groupBox_sports.Name = "groupBox_sports";
+            this.groupBox_sports.Size = new System.Drawing.Size(138, 55);
+            this.groupBox_sports.TabIndex = 24;
+            this.groupBox_sports.TabStop = false;
+            this.groupBox_sports.Text = "Виды спорта";
+            // 
+            // sportsCB
+            // 
+            this.sportsCB.FormattingEnabled = true;
+            this.sportsCB.Location = new System.Drawing.Point(6, 19);
+            this.sportsCB.Name = "sportsCB";
+            this.sportsCB.Size = new System.Drawing.Size(125, 21);
+            this.sportsCB.TabIndex = 3;
+            this.sportsCB.SelectedIndexChanged += new System.EventHandler(this.sportsCB_SelectedIndexChanged);
+            // 
+            // groupBox_disciplines
+            // 
+            this.groupBox_disciplines.BackColor = System.Drawing.Color.Transparent;
+            this.groupBox_disciplines.Controls.Add(this.disciplinesCB);
+            this.groupBox_disciplines.Enabled = false;
+            this.groupBox_disciplines.Location = new System.Drawing.Point(12, 73);
+            this.groupBox_disciplines.Name = "groupBox_disciplines";
+            this.groupBox_disciplines.Size = new System.Drawing.Size(138, 55);
+            this.groupBox_disciplines.TabIndex = 25;
+            this.groupBox_disciplines.TabStop = false;
+            this.groupBox_disciplines.Text = "Дисциплина";
+            // 
+            // disciplinesCB
+            // 
+            this.disciplinesCB.FormattingEnabled = true;
+            this.disciplinesCB.Location = new System.Drawing.Point(6, 19);
+            this.disciplinesCB.Name = "disciplinesCB";
+            this.disciplinesCB.Size = new System.Drawing.Size(126, 21);
+            this.disciplinesCB.TabIndex = 15;
+            this.disciplinesCB.SelectedIndexChanged += new System.EventHandler(this.disciplinesCB_SelectedIndexChanged);
+            // 
+            // groupBox_goals
+            // 
+            this.groupBox_goals.BackColor = System.Drawing.Color.Transparent;
+            this.groupBox_goals.Controls.Add(this.goalsCB);
+            this.groupBox_goals.Enabled = false;
+            this.groupBox_goals.Location = new System.Drawing.Point(12, 134);
+            this.groupBox_goals.Name = "groupBox_goals";
+            this.groupBox_goals.Size = new System.Drawing.Size(138, 55);
+            this.groupBox_goals.TabIndex = 26;
+            this.groupBox_goals.TabStop = false;
+            this.groupBox_goals.Text = "Цель";
+            // 
+            // goalsCB
+            // 
+            this.goalsCB.FormattingEnabled = true;
+            this.goalsCB.Location = new System.Drawing.Point(6, 19);
+            this.goalsCB.Name = "goalsCB";
+            this.goalsCB.Size = new System.Drawing.Size(125, 21);
+            this.goalsCB.TabIndex = 18;
+            // 
+            // groupBox_Start
+            // 
+            this.groupBox_Start.BackColor = System.Drawing.Color.Transparent;
+            this.groupBox_Start.Controls.Add(this.datetimeStart);
+            this.groupBox_Start.Enabled = false;
+            this.groupBox_Start.Location = new System.Drawing.Point(12, 195);
+            this.groupBox_Start.Name = "groupBox_Start";
+            this.groupBox_Start.Size = new System.Drawing.Size(138, 54);
+            this.groupBox_Start.TabIndex = 31;
+            this.groupBox_Start.TabStop = false;
+            this.groupBox_Start.Text = "Начало периода";
+            // 
+            // datetimeStart
+            // 
+            this.datetimeStart.Location = new System.Drawing.Point(6, 19);
+            this.datetimeStart.Name = "datetimeStart";
+            this.datetimeStart.Size = new System.Drawing.Size(125, 20);
+            this.datetimeStart.TabIndex = 27;
+            // 
+            // groupBox_end
+            // 
+            this.groupBox_end.BackColor = System.Drawing.Color.Transparent;
+            this.groupBox_end.Controls.Add(this.datetimeEnd);
+            this.groupBox_end.Enabled = false;
+            this.groupBox_end.Location = new System.Drawing.Point(12, 255);
+            this.groupBox_end.Name = "groupBox_end";
+            this.groupBox_end.Size = new System.Drawing.Size(138, 54);
+            this.groupBox_end.TabIndex = 31;
+            this.groupBox_end.TabStop = false;
+            this.groupBox_end.Text = "Конец периода";
+            // 
+            // datetimeEnd
+            // 
+            this.datetimeEnd.Location = new System.Drawing.Point(6, 19);
+            this.datetimeEnd.Name = "datetimeEnd";
+            this.datetimeEnd.Size = new System.Drawing.Size(125, 20);
+            this.datetimeEnd.TabIndex = 27;
+            // 
+            // Graphic
+            // 
+            this.BackColor = System.Drawing.SystemColors.Control;
+            this.BackgroundImage = global::Sportsmen_Monitoring.Properties.Resources.arrows_mirror;
+            this.ClientSize = new System.Drawing.Size(924, 421);
+            this.Controls.Add(this.groupBox_end);
+            this.Controls.Add(this.groupBox_Start);
+            this.Controls.Add(this.groupBox_goals);
+            this.Controls.Add(this.groupBox_disciplines);
+            this.Controls.Add(this.groupBox_sports);
+            this.Controls.Add(this.panel1);
+            this.ForeColor = System.Drawing.SystemColors.Control;
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Fixed3D;
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.MaximizeBox = false;
+            this.Name = "Graphic";
+            this.Text = "Графики результатов";
+            this.Load += new System.EventHandler(this.Graphic_Load);
+            this.ClientSizeChanged += new System.EventHandler(this.Graphic_Resize);
+            this.Resize += new System.EventHandler(this.Graphic_Resize);
+            this.panel1.ResumeLayout(false);
+            this.panel1.PerformLayout();
+            this.groupBox_sports.ResumeLayout(false);
+            this.groupBox_disciplines.ResumeLayout(false);
+            this.groupBox_goals.ResumeLayout(false);
+            this.groupBox_Start.ResumeLayout(false);
+            this.groupBox_end.ResumeLayout(false);
+            this.ResumeLayout(false);
+
+        }
+
+        private void Graphic_Resize(object sender, EventArgs e)
+        {
+            panel1.Width = Width;
+            panel1.Height = Height;
+            drawGrid();
+            drawOsi();
+            Refresh();
+            panel1.Refresh();
+        }
+
+        private void Graphic_Load(object sender, EventArgs e)
+        {
+            sportsCB.Items.AddRange(Model.Instance.Sports.ToArray());
+        }
+
+        private void sportsCB_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            var currentSports = sportsCB.SelectedItem as Sport;
+            disciplinesCB.Items.Clear();
+            disciplinesCB.Items.AddRange(Model.Instance.Disciplines.Where(a => a.Sport.ID == currentSports.ID).ToArray());
+            groupBox_disciplines.Enabled = true;
+        }
+
+        private void disciplinesCB_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            var currentDiscipline = disciplinesCB.SelectedItem as Discipline;
+            goalsCB.Items.Clear();
+            goalsCB.Items.AddRange(Model.Instance.Goals.Where(a => a.Discipline.ID == currentDiscipline.ID).ToArray());
+            groupBox_goals.Enabled = true;
+        }
+
+       
+    }
+}

@@ -1,0 +1,158 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Windows.Forms;
+
+namespace Sportsmen_Monitoring
+{
+    public partial class Form_Input_Admin : Form
+    {
+        public Form_Input_Admin()
+        {
+            InitializeComponent();
+        }
+
+        private void Form_Input_Load(object sender, EventArgs e)
+        {
+            sportsCB.Items.AddRange(Model.Instance.Sports.ToArray());
+
+
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void sportsCB_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            var currentSports = sportsCB.SelectedItem as Sport;
+            disciplinesCB.Items.Clear();
+            disciplinesCB.Items.AddRange(Model.Instance.Disciplines.Where(a => a.Sport.ID == currentSports.ID).ToArray());
+            groupBox_disciplines.Enabled = true;
+        }
+
+        private void disciplinesCB_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            var currentDiscipline = disciplinesCB.SelectedItem as Discipline;
+            goalsCB.Items.Clear();
+            goalsCB.Items.AddRange(Model.Instance.Goals.Where(a => a.Discipline.ID == currentDiscipline.ID).ToArray());
+            groupBox_goals.Enabled = true;
+        }
+
+        private void goalsCB_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            var currentGoal = goalsCB.SelectedItem as Goal;
+            groupBox_Start.Enabled = true;
+            groupBox_end.Enabled = true;
+            groupBox_sports.Enabled = true;
+
+            var sub = datetimeEnd.Value - datetimeStart.Value;
+            for (int i = 0; i < sub.Days + 1; i++)
+            {
+                var date = datetimeStart.Value.AddDays(i);
+                var column = new DataGridViewColumn();
+                column.Width = 70;
+                column.HeaderText = date.ToShortDateString();
+                dataGridView1.Columns.Add(column);
+            }
+
+            foreach (var a in Model.Instance.Users_Goals.Where(q => q.Goal.ID == currentGoal.ID).Select(q => q.User).ToArray())
+            {
+                sportsmens.Items.Add(a);
+                var row = new DataGridViewRow();
+                foreach (var q in dataGridView1.Columns)
+                    row.Cells.Add(new DataGridViewTextBoxCell() { Value = "" });
+                row.ReadOnly = false;
+                row.HeaderCell.Value = a.ToString();
+                dataGridView1.Rows.Add(row);
+            }
+            dataGridView1.RowHeadersWidth = 150;
+
+        }
+
+        private void datetimeStart_ValueChanged(object sender, EventArgs e)
+        {
+            ReGenDGV();
+        }
+
+        private void datetimeEnd_ValueChanged(object sender, EventArgs e)
+        {
+            ReGenDGV();
+        }
+
+        private void ReGenDGV()
+        {
+            var currentGoal = goalsCB.SelectedItem as Goal;
+            var sub = datetimeEnd.Value.AddSeconds(5) - datetimeStart.Value;
+            dataGridView1.Columns.Clear();
+            dataGridView1.Rows.Clear();
+            if (datetimeStart.Value.Date > datetimeEnd.Value.Date)
+                return;
+            for (int i = 0; i < sub.Days + 1; i++)
+            {
+                var date = datetimeStart.Value.AddDays(i);
+                var column = new DataGridViewColumn();
+                column.Width = 70;
+                column.HeaderText = date.ToShortDateString();
+                dataGridView1.Columns.Add(column);
+            }
+            foreach (var a in Model.Instance.Users_Goals.Where(q => q.Goal.ID == currentGoal.ID).Select(q => q.User).ToArray())
+            {
+                var row = new DataGridViewRow();
+                foreach (var q in dataGridView1.Columns)
+                    row.Cells.Add(new DataGridViewTextBoxCell() { Value = "" });
+                row.ReadOnly = false;
+                row.HeaderCell.Value = a.ToString();
+                row.HeaderCell.Tag = a;
+                dataGridView1.Rows.Add(row);
+            }
+        }
+
+        private void PostedDataButton_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                foreach (var row in dataGridView1.Rows.OfType<DataGridViewRow>())
+                {
+                    for (int i = 0; i < dataGridView1.Columns.Count; i++)
+                    {
+                        int pars = -1;
+                        var res = int.TryParse(row.Cells[i].Value as string, out pars);
+                        if (!(res && pars > 0))
+                        {
+                            MessageBox.Show("Поля заполнены не все!");
+                            return;
+                        }
+
+                    }
+                }
+            }
+            catch
+            {
+                MessageBox.Show("Поля заполнены неправильно!");
+                return;
+            }
+
+            foreach (var row in dataGridView1.Rows.OfType<DataGridViewRow>())
+            {
+                var User_Goal = row.HeaderCell.Tag as User_Goal;
+                for (int i = 0; i < dataGridView1.Columns.Count; i++)
+                {
+                    var column = dataGridView1.Columns[i];
+                    var day = DateTime.Parse(column.HeaderText);
+                    Model.Instance.Users_Datas.Add(new User_Data { User_Goal = User_Goal, Date = day, value = float.Parse(row.Cells[i].Value as string) });
+                    Model.Instance.SaveBinaryFormat();
+                }
+                PostedDataButton.Visible = false;
+                DataPostedLabel.Visible = true;
+                ViewGrafics.Visible = true;
+            }
+        }
+
+    }
+}

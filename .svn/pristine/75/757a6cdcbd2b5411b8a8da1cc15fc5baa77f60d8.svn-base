@@ -1,0 +1,133 @@
+﻿namespace Sportsmen_Monitoring
+{
+    partial class FormAuth
+    {
+        /// <summary>
+        /// Required designer variable.
+        /// </summary>
+        private System.ComponentModel.IContainer components = null;
+
+        /// <summary>
+        /// Clean up any resources being used.
+        /// </summary>
+        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing && (components != null))
+            {
+                components.Dispose();
+            }
+            base.Dispose(disposing);
+        }
+
+        #region Windows Form Designer generated code
+
+        /// <summary>
+        /// Required method for Designer support - do not modify
+        /// the contents of this method with the code editor.
+        /// </summary>
+        private void InitializeComponent()
+        {
+            this.authB = new System.Windows.Forms.Button();
+            this.reginstrationLink = new System.Windows.Forms.LinkLabel();
+            this.label1 = new System.Windows.Forms.Label();
+            this.label2 = new System.Windows.Forms.Label();
+            this.loginTB = new System.Windows.Forms.TextBox();
+            this.passTB = new System.Windows.Forms.TextBox();
+            this.errorLabel = new System.Windows.Forms.Label();
+            this.SuspendLayout();
+            // 
+            // authB
+            // 
+            this.authB.Location = new System.Drawing.Point(8, 71);
+            this.authB.Name = "authB";
+            this.authB.Size = new System.Drawing.Size(126, 23);
+            this.authB.TabIndex = 0;
+            this.authB.Text = "Авторизироваться";
+            this.authB.UseVisualStyleBackColor = true;
+            this.authB.Click += new System.EventHandler(this.authB_Click);
+            // 
+            // reginstrationLink
+            // 
+            this.reginstrationLink.AutoSize = true;
+            this.reginstrationLink.Location = new System.Drawing.Point(140, 76);
+            this.reginstrationLink.Name = "reginstrationLink";
+            this.reginstrationLink.Size = new System.Drawing.Size(72, 13);
+            this.reginstrationLink.TabIndex = 1;
+            this.reginstrationLink.TabStop = true;
+            this.reginstrationLink.Text = "Регистрация";
+            this.reginstrationLink.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.reginstrationLink_LinkClicked);
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(12, 9);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(41, 13);
+            this.label1.TabIndex = 2;
+            this.label1.Text = "Логин:";
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(5, 35);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(48, 13);
+            this.label2.TabIndex = 3;
+            this.label2.Text = "Пароль:";
+            // 
+            // loginTB
+            // 
+            this.loginTB.Location = new System.Drawing.Point(59, 6);
+            this.loginTB.Name = "loginTB";
+            this.loginTB.Size = new System.Drawing.Size(149, 20);
+            this.loginTB.TabIndex = 4;
+            // 
+            // passTB
+            // 
+            this.passTB.Location = new System.Drawing.Point(59, 32);
+            this.passTB.Name = "passTB";
+            this.passTB.Size = new System.Drawing.Size(149, 20);
+            this.passTB.TabIndex = 5;
+            // 
+            // errorLabel
+            // 
+            this.errorLabel.AutoSize = true;
+            this.errorLabel.ForeColor = System.Drawing.Color.Red;
+            this.errorLabel.Location = new System.Drawing.Point(12, 55);
+            this.errorLabel.Name = "errorLabel";
+            this.errorLabel.Size = new System.Drawing.Size(193, 13);
+            this.errorLabel.TabIndex = 6;
+            this.errorLabel.Text = "Логин или пароль введены неверно!";
+            this.errorLabel.Visible = false;
+            // 
+            // FormAuth
+            // 
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.ClientSize = new System.Drawing.Size(220, 102);
+            this.Controls.Add(this.errorLabel);
+            this.Controls.Add(this.passTB);
+            this.Controls.Add(this.loginTB);
+            this.Controls.Add(this.label2);
+            this.Controls.Add(this.label1);
+            this.Controls.Add(this.reginstrationLink);
+            this.Controls.Add(this.authB);
+            this.Name = "FormAuth";
+            this.Text = "Авторизация";
+            this.ResumeLayout(false);
+            this.PerformLayout();
+
+        }
+
+        #endregion
+
+        private System.Windows.Forms.Button authB;
+        private System.Windows.Forms.LinkLabel reginstrationLink;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.TextBox loginTB;
+        private System.Windows.Forms.TextBox passTB;
+        private System.Windows.Forms.Label errorLabel;
+    }
+}

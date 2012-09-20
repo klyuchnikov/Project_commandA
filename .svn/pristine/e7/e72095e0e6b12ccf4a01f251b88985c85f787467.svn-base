@@ -1,0 +1,217 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Windows.Forms;
+
+namespace Sportsmen_Monitoring
+{
+    public partial class Graphic : Form
+    {
+        int x_1 = 0;
+        int y_1 = 0;
+        int x_2 = 0;
+        int y_2 = 0;
+        int count = 0;
+        Graphics graph;
+        Image buffer;
+        Graphics bufgraph;
+        bool point = true;
+        public Panel panel1;
+        private Label label1;
+        List<Point> points = new List<Point>();
+        public Graphic()
+        {
+            InitializeComponent();
+            buffer = new Bitmap(panel1.Width, panel1.Height);
+            bufgraph = Graphics.FromImage(buffer);
+            //bufgraph.FillEllipse(Brushes.White, 0, 0, panel1.Width, panel1.Height);
+            //bufgraph.FillRectangle(Brushes.White, 0, 0, paintPanel.Width, paintPanel.Height);
+            graph = panel1.CreateGraphics();
+        }
+
+        public void drawGrid() 
+        {
+            Brush br = new SolidBrush(Color.LightGray);
+            Pen pen = new Pen(br);
+            for (int i = 0; i < panel1.Width; i += 10)
+            {
+                bufgraph.DrawLine(pen, i, 0, i, panel1.Height);
+            }
+            for (int i = 0; i < panel1.Height; i += 10)
+            {
+                bufgraph.DrawLine(pen, 0, i, panel1.Width, i);
+            }
+            
+        }
+
+        public void drawOsi()
+        {
+            Brush br = new SolidBrush(Color.Black);
+            Pen pen = new Pen(br);
+            bufgraph.DrawLine(pen, 20, panel1.Height - 20, 20, 20);
+            bufgraph.DrawLine(pen, 20, panel1.Height - 20, panel1.Width - 20, panel1.Height - 20);
+
+            bufgraph.DrawLine(pen, 20, 20, 15, 30);
+            bufgraph.DrawLine(pen, 20, 20, 25, 30);
+
+            bufgraph.DrawLine(pen, panel1.Width - 20, panel1.Height - 20, panel1.Width - 30, panel1.Height - 25);
+            bufgraph.DrawLine(pen, panel1.Width - 20, panel1.Height - 20, panel1.Width - 30, panel1.Height - 15);
+            
+        }
+
+        public void drawPoints()
+        {
+            Brush br = new SolidBrush(Color.Black);
+            Pen pen = new Pen(br);
+            bufgraph.DrawEllipse(pen, 25, 25, 10, 10);
+            bufgraph.DrawEllipse(pen, 125, 125, 10, 10);
+            bufgraph.DrawEllipse(pen, 175, 175, 10, 10);
+            bufgraph.DrawEllipse(pen, 225, 225, 10, 10);
+            bufgraph.DrawEllipse(pen, 335, 335, 10, 10);
+
+            bufgraph.DrawEllipse(pen, 25, 45, 10, 10);
+            bufgraph.DrawEllipse(pen, 55, 175, 10, 10);
+            bufgraph.DrawEllipse(pen, 85, 265, 10, 10);
+            bufgraph.DrawEllipse(pen, 175, 295, 10, 10);
+            bufgraph.DrawEllipse(pen, 315, 335, 10, 10);
+
+            bufgraph.DrawEllipse(pen, 45, 25, 10, 10);
+            bufgraph.DrawEllipse(pen, 175, 55, 10, 10);
+            bufgraph.DrawEllipse(pen, 265, 85, 10, 10);
+            bufgraph.DrawEllipse(pen, 295, 175, 10, 10);
+            bufgraph.DrawEllipse(pen, 335, 315, 10, 10);
+
+        }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+           
+        }
+
+        public void draw_line ()
+        {
+            Pen blackPen = new Pen(Color.Black, 2);
+            bufgraph.DrawLine(blackPen, x_1, y_1, x_2, y_2);
+        }
+
+
+        private void panel1_Paint(object sender, PaintEventArgs e)
+        {
+            drawGrid();
+            drawOsi();
+            drawPoints();
+            bufgraph.DrawLine(new Pen(Color.Black, 2), x_1, y_1, x_2, y_2);
+            graph.DrawImage(buffer, 0, 0, panel1.Width, panel1.Height);
+            
+        }
+
+        private void panel1_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (point)
+            {
+                x_1 = e.X;
+                y_1 = e.Y;
+                point = false;
+            }
+            
+
+        }
+
+        private void panel1_MouseUp(object sender, MouseEventArgs e)
+        {
+            points.Add(new Point(x_1,y_1));
+            if ((x_1 >= 25) && (x_1 <= 35) || (x_1 >= 55) && (x_1 <= 65) || (x_1 >= 85) && (x_1 <= 95) || (x_1 >= 175) && (x_1 <= 185) || (x_1 >= 315) && (x_1 <= 325))
+            {
+                int temp = 1;
+                count++;
+                if (count > 4)
+                {
+                    label1.Text = "График построен правильно";
+                }
+            }
+            else
+            {
+                label1.Text = "График построен неправильно";
+            }
+            x_2 = e.X;
+            y_2 = e.Y;
+            panel1.Refresh();
+            
+            x_1 = x_2;
+            y_1 = y_2;
+            
+        }
+
+        private void Graphic_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            Application.Exit();
+        }
+
+        private void InitializeComponent()
+        {
+            this.panel1 = new System.Windows.Forms.Panel();
+            this.label1 = new System.Windows.Forms.Label();
+            this.panel1.SuspendLayout();
+            this.SuspendLayout();
+            // 
+            // panel1
+            // 
+            this.panel1.BackColor = System.Drawing.Color.White;
+            this.panel1.Controls.Add(this.label1);
+            this.panel1.Location = new System.Drawing.Point(-3, -3);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(929, 424);
+            this.panel1.TabIndex = 0;
+            this.panel1.Paint += new System.Windows.Forms.PaintEventHandler(this.panel1_Paint);
+            this.panel1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.panel1_MouseDown);
+            this.panel1.MouseUp += new System.Windows.Forms.MouseEventHandler(this.panel1_MouseUp);
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(779, 148);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(51, 13);
+            this.label1.TabIndex = 0;
+            this.label1.Text = "Графики";
+            // 
+            // Graphic
+            // 
+            this.BackColor = System.Drawing.Color.Black;
+            this.ClientSize = new System.Drawing.Size(924, 421);
+            this.Controls.Add(this.panel1);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Fixed3D;
+            this.MaximizeBox = false;
+            this.Name = "Graphic";
+            this.Text = "Графики результатов";
+            this.Load += new System.EventHandler(this.Graphic_Load);
+            this.ClientSizeChanged += new System.EventHandler(this.Graphic_Resize);
+            this.Resize += new System.EventHandler(this.Graphic_Resize);
+            this.panel1.ResumeLayout(false);
+            this.panel1.PerformLayout();
+            this.ResumeLayout(false);
+
+        }
+
+        private void Graphic_Resize(object sender, EventArgs e)
+        {
+            panel1.Width = Width;
+            panel1.Height = Height;
+            drawGrid();
+            drawOsi();
+            Refresh();
+            panel1.Refresh();
+        }
+
+        private void Graphic_Load(object sender, EventArgs e)
+        {
+
+        }
+
+       
+    }
+}

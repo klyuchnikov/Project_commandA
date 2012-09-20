@@ -1,0 +1,158 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Windows.Forms;
+
+namespace Sportsmen_Monitoring
+{
+    public partial class Form_Input : Form
+    {
+        public Form_Input()
+        {
+            InitializeComponent();
+        }
+
+        float resultat = 0;
+        // заполняем какими-то данными 
+        private void Form_Input_Load(object sender, EventArgs e)
+        {
+          /*  Model.Instance.Users.Add(new User { FirstName = "Иванов", Name = "Илья", Patronumic = "Васильевич" });
+           
+            Model.Instance.Sports.Add(new Sport{ Name = "Бег"});
+            Model.Instance.Sports.Add(new Sport { Name = "Плавание" });
+            sportsCB.Items.AddRange(Model.Instance.Sports.ToArray());
+
+            Model.Instance.Scales.Add( new Scale{ Name = "сек"});
+            Model.Instance.Scales.Add( new Scale{ Name = "м"});
+
+            Model.Instance.Disciplines.Add(new Discipline { Name = "100 м", Sport = Model.Instance.Sports.Single(a => a.Name == "Бег") });
+            Model.Instance.Disciplines.Add(new Discipline { Name = "200 м", Sport = Model.Instance.Sports.Single(a => a.Name == "Бег") });
+            Model.Instance.Disciplines.Add(new Discipline { Name = "15 км", Sport = Model.Instance.Sports.Single(a => a.Name == "Бег") });
+
+            Model.Instance.Disciplines.Add(new Discipline { Name = "50 м", Sport = Model.Instance.Sports.Single(a => a.Name == "Плавание"), Scales = Model.Instance.Scales.Single(a => a.Name == "сек") });
+            Model.Instance.Disciplines.Add(new Discipline { Name = "300 м", Sport = Model.Instance.Sports.Single(a => a.Name == "Плавание"), Scales = Model.Instance.Scales.Single(a => a.Name == "м") });
+            disciplinesCB.Items.Add(Model.Instance.Disciplines.ToArray());
+
+
+            Model.Instance.Goals.Add(new Goal { Discipline = Model.Instance.Disciplines.Single(a => a.Name == "50 м"), Description = "проплыть за 10 секунд" });
+            Model.Instance.Goals.Add(new Goal { Discipline = Model.Instance.Disciplines.Single(a => a.Name == "100 м"), Description = "пробежать за 30 секунд" });
+          //  Model.Instance.Users_Goals.Add(new User_Goal { Goal = Model.Instance.Goals.Single(a => a.Description == "пробежать за 10 секунд") });
+
+            Model.Instance.SaveBinaryFormat(); 
+          //  Model.LoadFromBinaryFile(); */
+            sportsCB.Items.AddRange(Model.Instance.Sports.ToArray());
+            disciplinesCB.Items.Add(Model.Instance.Disciplines.ToArray());
+
+        }
+
+        // происходит при изменении в комбобоксе "Виды спорта"
+        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            groupBox_disciplines.Enabled = true;
+            groupBox_Send.Enabled = false;
+            disciplinesCB.Text = "";
+            goalsCB.Text = "";
+
+            label_sport.Text = (sportsCB.SelectedItem as Sport).Name;
+            label_discipline.Text = "";
+
+            var sport = (sportsCB.SelectedItem as Sport);
+            disciplinesCB.Items.Clear();
+            disciplinesCB.Items.AddRange(Model.Instance.Disciplines.Where(q => q.Sport.ID == sport.ID).ToArray());
+
+        }
+
+        private void disciplinesCB_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            goalsCB.Text = "";
+            groupBox_Send.Enabled = false;
+            groupBox_goals.Enabled = true;
+            button_newGoal.Enabled = true;
+            goalsCB.SelectedText = "";
+
+            label_discipline.Text = (disciplinesCB.SelectedItem as Discipline).Name;
+
+            newGoal_CB.Items.Clear();
+            newGoal_CB.Items.AddRange(Model.Instance.Goals.Where(q => q.Discipline.ID == (disciplinesCB.SelectedItem as Discipline).ID).ToArray());
+
+
+            var discipline = (disciplinesCB.SelectedItem as Discipline);
+            goalsCB.Items.Clear();
+            goalsCB.Items.AddRange(Model.Instance.Users_Goals.Where(q => (q.User.ID == Model.Instance.CurrentUser.ID) && (q.Goal.Discipline.ID == discipline.ID ) ).ToArray());
+
+        }
+
+        private void goalsCB_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            groupBox_Send.Enabled = true;
+            groupBox_AddGoal.Visible = false;
+
+            Discipline discipline = (disciplinesCB.SelectedItem as Discipline);
+            label_metric.Text = discipline.Scales.Name.ToString();
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            if (  float.TryParse(textBox_result.Text, out resultat))
+            {
+
+                Model.Instance.Users_Datas.Add(new User_Data { Date = dateTimePickerGoal.Value, value = resultat, User_Goal = (goalsCB.SelectedItem as User_Goal)});
+                Model.Instance.SaveBinaryFormat();
+                label_send.Text = "Данные успешо отправлены!";
+                label_send.Visible = true;
+                label_send.ForeColor = Color.Green;
+            }
+            else
+            {
+                label_send.Text = "Проверьте правильность введённых данных";
+                label_send.ForeColor = Color.Red;
+                label_send.Visible = true;
+            } 
+        }
+
+        private void button_GoGraph_Click(object sender, EventArgs e)
+        {
+            var form = new Graphic();
+            Hide();
+            form.ShowDialog();
+            Close();
+        }
+
+        private void button_newGoal_Click(object sender, EventArgs e)
+        {
+            groupBox_AddGoal.Visible = true;
+            label_sport.Text = (sportsCB.SelectedItem as Sport).Name;
+            label_discipline.Text = (disciplinesCB.SelectedItem as Discipline).Name;
+            newGoal_CB.Items.Clear();
+            newGoal_CB.Items.AddRange(Model.Instance.Goals.Where(q => q.Discipline.ID == (disciplinesCB.SelectedItem as Discipline).ID).ToArray());
+
+        }
+
+        private void button_AddGoal_Click(object sender, EventArgs e)
+        {
+            
+            var res = Model.Instance.Users_Goals.SingleOrDefault(q => (q.User.ID == Model.Instance.CurrentUser.ID) && (q.Goal.ID == (newGoal_CB.SelectedItem as Goal).ID));
+
+            if (res == null)
+            {
+
+                Model.Instance.Users_Goals.Add(new User_Goal { User = Model.Instance.CurrentUser, DateStart = dateTimePicker_newGoal.Value, Goal = (newGoal_CB.SelectedItem as Goal) });
+                Model.Instance.SaveBinaryFormat();
+                MessageBox.Show("Данные успешно добавлены!", "Ура", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            else
+            {
+                MessageBox.Show("Такая цель у вас уже есть!", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            }
+
+        private void newGoal_CB_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            button_AddGoal.Enabled = true;
+        }
+    }
+}

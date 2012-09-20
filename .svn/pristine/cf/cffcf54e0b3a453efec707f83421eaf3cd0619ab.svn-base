@@ -1,0 +1,49 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Windows.Forms;
+
+namespace Sportsmen_Monitoring
+{
+    public partial class FormAuth : Form
+    {
+        public FormAuth()
+        {
+            InitializeComponent();
+        }
+
+        private void authB_Click(object sender, EventArgs e)
+        {
+            var res = Model.Authorization(loginTB.Text, passTB.Text);
+            if (res)
+            {
+                var user = Model.Instance.Users.Single(a => a.AspnetUserLogin == loginTB.Text);
+                Model.Instance.CurrentUser = user;
+                Form form;
+                if (user.Right == 2)
+                    form = new Form_Input_Admin();
+                else// if (user.Right == 1)
+                    form = new Form_Input();
+                Hide();
+                form.ShowDialog();
+                Close();
+            } // переход на главную форму
+            if (!res)
+                errorLabel.Visible = true;
+
+        }
+
+        private void reginstrationLink_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            var form = new FormRegistration();
+            Hide();
+            form.ShowDialog();
+            Show();
+        }
+
+    }
+}
